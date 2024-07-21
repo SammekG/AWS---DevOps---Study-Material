@@ -1,0 +1,1546 @@
+Terraform
+- provision infrastructure
+- IAAC 
+	- cloud formation(AWS and open stack)
+	- ARM Templets(Azure)
+	- Deployment manager(GCP))
+- Terraform work in VM,AWS,Azure,GCP 
+- Repeat and Replicate
+
+>>Commands 
+1) terraform init
+2) terraform plan
+3) terraform validate
+4) terraform apply
+5) terraform destroy
+
+
+>>>>>>>>>  What is Terraform? <<<<<<<<<<
+
+> Infeastructure management tool made by hashicorp
+
+> Ability to deploy infrastructure across multiple platforms include private and public cloude
+
+> Lets you provision, manage and maintain cloud resources 
+
+> Servers, networking, storage etc. all in one centralize set of code
+
+> Terraform is a tool to set command line programs and cloud based application you run
+
+> it's also a language that defines infrastructure changes
+
+--------------------------------------------------
+
+>>>>>> Beyond Config Management <<<<<<<
+
+>> It's not a config management tool.
+
+>> It's can create a server
+
+>> It deploys pre-made server images
+
+>> base server images can be created with packer
+
+>> Immutable infrastructure
+
+>> Disposable Infrastructure - freely delete and replace any instance
+
+--------------------------------------------------
+
+>>>>>> Types of IAC Tools <<<<<<<
+
+> Configuration management
+- Ansible - Puppet - SaltStack
+* Design to install and manage software
+* Maintain Standard Structure
+* Version Control
+* Idempotent
+
+
+> Server Templeting
+- Docker  - packer - Vagrant
+* Pre Installed Software and Dependencies
+* Virtual Machine or Docker images
+* Immutable Infrastructure
+
+
+> Provisioning Tool
+- Terraform - Cloudformation
+* Deploy immutable infrastructure resources
+* Servers, databases, network components etc.
+* Multiple providers
+
+
+>> HCL : HashiCorp Configuration Language
+
+init >> Plan >> Apply
+
+>> Ubuntu/Debian
+
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install terraform
+
+
+>> CentOS/RHEL
+
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+sudo yum -y install terraform
+
+********************************************
+
+>>>> HashiCorp Configuration Language (HCL) Basics
+
+- Syntax
+
+<block> <parameters> {
+	key1 = value1
+	key2 = value2
+}
+
+<block>     >>>  Contains Insrastructure platform
+
+************************************
+e.g.:
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+
+>> Run this
+#terraform init
+#terraform plan
+#terraform apply
+
+- To check details of resource just created
+#terraform show
+************************************
+
+> resource -> Block name
+
+> "local_file"  -> Resource Type (local=provider & file=type of resource)
+   - Provider = aws / gcp / azure etc.
+   - reources = IAM / EC2 / S3 etc.
+   
+> "pet"  ->  resource name
+
+> { <whatever inside> }  ->  Arguments - key value pair format
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+
+e.g.: aws ec2 instance
+
+resource "aws_instance" "websrver" {
+	ami = "ami-0c2f25c1f66a1ff4d"
+	instance_type = "t2.micro"
+}
+
+e.g.: aws s3 bucket
+
+resource "aws_s3_bucket" "data" {
+	bucket = "webserver-bucket-org-2207"
+	acl = "private"
+}
+
+
+>>>> Update and Destroy Infrastructure
+
+- To Update
+e.g.:
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+	file_permision = "0700"
+}
+#terraform plan
+	- it will show updated permission
+#terraform apply
+	- delete previous file and create new with updated permission
+
+- To Destroy
+#terraform destroy
+
+
+>>>> Providers Tier
+- Official > aws, GCP, Azure
+- Partner / Verified > bigip, heroku, digitalocean
+- Community > active directory, ucloud, netapp-gcp
+
+
+>>>> terraform init
+- downloads and install plugins for the providers used with the configuration
+- shows version of plugin that is installed
+
+- plugins are downloaded in hidden dir
+ls /root/terraform-local-file/.terraform
+
+- * hashicorp/local: version = "~> 2.0.0".
+	- in this "* hashicorp/local" known as source address
+	- "hashicorp" : organizational namespace
+	- "local" : Type
+	- "registory.terraform.io" : Hostname
+	
+	
+>>>> Configuration Directory
+
+1) main.tf : Main configuration file containing resource defination
+2) variables.tf : Contain variable declaration
+3) outputs.tf : Contains outputs from resource
+4) provider.tf : Contain Provider defination
+
+e.g.: main.tf
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+
+resource "local_file" "cat" {
+	filename = "/root/cat.txt"
+	content = "My favorite pet is Mr. Whiskers"
+}
+
+
+>>>> Multiple Providers
+
+e.g.:
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+resource "random_pet" "my-pet" {
+	prefix = "Mrs"
+	separator = "."
+	length = "1"
+}
+
+
+>>>> Variables 
+
+- Type >> string / number / bool / any(default value) / list / Map / Set / Objects / Tuples
+
+
+>> Variable Type
+
+e.g.: variables.tf
+
+variable "name" {
+     type = string
+     default = "Mark"
+  
+}
+variable "number" {
+     type = bool
+     default = true
+  
+}
+variable "distance" {
+     type = number
+     default = 5
+  
+}
+variable "jedi" {
+     type = map
+     default = {
+     filename = "/root/first-jedi"
+     content = "phanius"
+     }
+  
+}
+variable "gender" {
+     type = list(string)
+     default = ["Male", "Female"]
+}
+variable "hard_drive" {
+     type = map
+     default = {
+          slow = "HHD"
+          fast = "SSD"
+     }
+}
+variable "users" {
+     type = set(string)
+     default = ["tom", "jerry", "pluto", "daffy", "donald", "jerry", "chip", "dale"]
+
+  
+}
+
+variable "bella" {
+	type = object({
+		name = string
+		color = string
+		age = number
+		food = list(string)
+		favorite_pet = bool
+	})
+	
+	default = {
+		name = "bella"
+		color = "brown"
+		age = 7
+		food = ["fish", "chicken", "turkey"]
+		favorite_pet = true
+	}
+}
+
+variable kitty {
+	type 	= tuple ([string, number, bool])
+	default	= ["cat", 7, true]
+}
+
+
+>>>> Using Variables in Terraform
+
+- variable defination file
+
+e.g.: terraform.tfvars
+
+filename = "/root/pets.txt"
+content = "We love pets!"
+prefix = "Mrs"
+separator = "."
+length = "2"
+
+
+>> terraform.tfvars 	or 	terraform.tfvars.json
+
+>> *.auto.tfvars 	or 	*.auto.tfvars.json
+
+>> Variable defination precedence
+
+1 : Environmental variable
+2 : terraform.tfvars
+3 : *.auto.tfvars (alphabetical order)
+4 : -var or --var-file (command-line flags)
+
+1) Environmental variable
+- export TF_VAR_filename="/root/cats.txt"
+
+2) terraform.tfvars
+- filename = "/root/pets.txt"
+
+3) *.auto.tfvars (alphaetical order) - variable.auto.tfvars
+- filename = "/root/mypets.txt"
+
+4) -var or -var-file (commandline flags)
+- terraform apply -var "filename=/root/best-pet.txt"
+
+
+>> Interactive Mode
+- If we not specify values in variable.tfvars file then it will take it from terminal when we run : terraform apply command
+
+
+>> Command Line Flags
+#terraform apply -var "filename=/root/pets.txt" -var "content=We Love Pets!" -var "prefix=Mrs" -var "seperator=." -var "length=2"
+
+
+>> Environmental Variable
+$ export TF_VAR_filename="/root/pets.txt"
+$ export TF_VAR_content="We Love Pets!"
+$ export TF_VAR_prefix="Mrs"
+$ export TF_VAR_seperator="."
+$ export TF_VAR_length="2"
+$ terraform apply
+
+
+>>>> Resource Attributes
+
+resource "local_file" "time" {
+  filename = "/root/time.txt"
+  content = "Time stamp of this file is ${time_static.time_update.id}"
+}
+
+ resource "time_static" "time_update" {
+}
+
+
+>>>> Resource Dependencies
+- implicit dependency
+
+- explicit dependency
+e.g.:
+resource "local_file" "time" {
+  filename = "/root/time.txt"
+  content = "Time stamp of this file is my time"
+  depends_on = [
+	time_static.time_update
+}
+
+ resource "time_static" "time_update" {
+}
+
+
+>>>> Output Variables
+
+#terraform output
+
+e.g.:
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets is ${random_pet.my-pet}"
+}
+resource "random_pet" "my-pet" {
+	prefix = "Mrs"
+	separator = "."
+	length = "1"
+}
+output pet-name {
+	value		=	random_pet.my-pet.id
+	description	=	"Record the value of pet ID generated by the random_pet resource"
+}
+
+
+>>>> Terraform State
+
+- Mapping Configuration to real world
+- Tracking Metadata
+- Performance
+- Collaboration
+- terraform.tfstate : get created when we ran "terraform apply" command
+- jason data structure
+- resource defination of config file
+- complete record of infrastructure created by terraform
+- if we make chnages in config file then will be get reflect in state file after running terraform apply command And ID also get chnage
+
+>> Purpose of State
+- blue print of all the resources that terraform manages out there in real world
+- unique id of resources
+- if we have 3 resources in our config file and we apply the terraform after that we delete 2 resources from config then how terraform know which resource get destroy first so in that case state file came to picture in that everything is mention as per that it will destroy the non resources.
+- highly recomended to store state file in remote data store. e.g.: AWS S3 | HashiCorp Consul | Google Cloud Storage | Terraform Cloud
+
+$ terraform plan --refresh=false
+	- does not refresh state
+	- relise on cached attribute
+
+>> Terraform State Consideration
+- Sensitive Data
+- Storre Config file in Version Control : GitHub | GitLab | BitBucket
+- Sensitive State file stored in Remote State Backends : AWS S3 | Google Cloud Storage | Azure Storage | Terraform Cloud
+
+
+>>>> Terraform Commands
+
+1) $ terraform validate
+	- to check valication of config file
+
+2) $ terraform fmt
+	- format
+	- format the code of config file
+	- improve te redablity of config file
+	
+3) $ terraform show
+	- shows the state of the infrastructure
+	- current state of the resource
+	- if we want to print in jason format then use : $ terraform show -json
+	
+4) $ terraform providers
+	- to see the list of all provides used in config files
+	- A provider in Terraform is a plugin that enables interaction with an API
+	- providr configuration on new path then use : 
+		- $ terraform mirror /root/terraform/new_local_file
+	
+5) $ terraform output
+	- print all output variables used in config file
+	- print specific variable : $ terraform output pet-name
+	
+6) $ terraform refresh
+	- used to sync terraform with real world infrastructure
+	- refresh the state file
+	- automatically run when we ran : $ terraform plan and $ terraform apply comand
+	
+7) $ terraform graph
+	- create visual representation of dependency an terraform conf an execution plan
+	- Graph visualization software
+		- #apt update
+		- #apt install graphviz -y
+		- #terraform graph | dot -Tsvg > graph.svg  (generate graphics)
+
+🔷 Terraform Commands which Devops Engineers use on daily bases
+
+1. terraform init:
+- Initializes a working directory containing Terraform configuration files.
+
+2. terraform plan:
+- Generates an execution plan, outlining actions Terraform will take.
+
+3. terraform apply:
+- Applies the changes described in the Terraform configuration.
+
+4. terraform destroy:
+- Destroys all resources described in the Terraform configuration.
+
+5. terraform validate:
+- Checks the syntax and validity of Terraform configuration files.
+
+6. terraform refresh:
+- Updates the state file against real resources in the provider.
+
+7. terraform output:
+- Displays the output values from the Terraform state.
+
+8. terraform state list:
+- Lists resources within the Terraform state.
+
+9. terraform show:
+- Displays a human -readable output of the current state or a specific resource's state.
+
+10. terraform import:
+- Imports existing infrastructure into Terraform state.
+
+11. terraform fmt:
+- Rewrites Terraform configuration files to a canonical format.
+
+12. terraform graph:
+- Generates a visual representation of the Terraform dependency graph.
+
+13. terraform providers:
+- Prints a tree of the providers used in the configuration.
+
+14. terraform workspace list:
+- Lists available work spaces.
+
+15. terraform workspace select:
+- Switches to another existing workspace.
+
+16. terraform workspace new:
+- Creates a new workspace.
+
+17. terraform workspace delete:
+- Deletes an existing workspace.
+
+18. terraform state pull:
+- Pulls the state from a remote backend.
+
+19. terraform state push:
+- Pushes the state to a remote backend.
+
+20. terraform state rm:
+- Removes items from the state.
+
+21. terraform taint:
+- Manually marks a resource for recreation.
+
+22. terraform untaint:
+- Removes the 'tainted' state from a resource.
+
+23. terraform plan -out:
+- Saves the generated plan to a file.
+
+24. terraform apply -target=resource:
+- Applies changes only to a specific resource.
+
+25. terraform destroy -target=resource:
+- Destroys a specific resource.
+
+26. terraform apply -var="key=value":
+- Sets a variable's value directly in the command line.
+
+27. terraform apply -var -file=filename.tfvars:
+- Specifies a file containing variable definitions.
+
+
+>>>> Mutable vs Immutable Infrastructure
+
+1) Mutable: Something that can be changed. Meaning you can continue to make changes to it after it is created. 
+
+2) Immutable: Something that cannot be changed. Once it is created, you cannot change anything in that. (terraform)
+
+
+>>>> LifeCycle Rules
+
+1) create before destroy
+	- create the resource first and then destroy older
+e.g.:
+resource "local_file" "file" {
+    filename = var.filename
+    file_permission =  var.permission
+    content = "This is a random string - ${random_string.string.id}"
+    lifecycle {
+        create_before_destroy =  true
+    }   
+}
+
+
+2) prevent destroy
+	- Prevents destroy of a resource
+e.g.:
+resource "random_pet" "super_pet" {
+    length = var.length
+    prefix = var.prefix
+    lifecycle {
+      prevent_destroy = true
+    }
+}
+
+
+3) ignore chnages
+	- Ignore chnages to resource attribute (specific/all)
+e.g.:	
+resource "random_pet" "super_pet" {
+    length = var.length
+    prefix = var.prefix
+	tags = {
+		Name = "Project-A-Webserver"
+	}
+    lifecycle {
+      ignore_chnages = [
+		tags,length
+	  ]
+    }
+}
+
+
+>>>> Datasources
+
+❓What is a data block in Terraform, and how it differs from a resource block?
+
+🌀 In Terraform, a data block is used to fetch and read information from a data source, such as AWS, Azure, or any other provider. It allows us to query existing resources or data from external systems without actually creating or modifying them. Data blocks are primarily used for retrieving information that is necessary for configuring resources but doesn't need to be managed by Terraform itself.
+
+🌀 Here's a basic example of a data block querying an AWS AMI :
+
+ data "aws_ami" "example" {
+ most_recent = true
+ filter {
+ name = "name"
+ values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+ }
+
+ owners = ["099720109477"] # Canonical
+}
+In the above example :
+🔯 data "aws_ami" "example" declares a data block named "example" that retrieves information about an AWS AMI.
+🔯 most_recent = true ensures that the most recent AMI matching the specified criteria is selected.
+🔯 The filter block specifies criteria for filtering AMIs, in this case, by name and owner.
+🔯 Finally, owners specifies the AWS account IDs that own the AMIs.
+
+
+On the other hand, a resource block in Terraform is used to define the infrastructure components that Terraform manages. 
+
+Simple e.g.:
+
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = dada.local_file.dog.content
+}	
+
+data "local_file" "dog" {
+	filename = "/root/dog.txt"
+}
+
+
+>>>> Meta-Arguments
+
+>> count : Resources are created as list
+
+e.g.:
+
+> main.tf 
+
+resource "local_file" "pet" {
+	filename = var.filename[count.index]
+	count	= length(var.filename)
+}
+
+> variables.tf
+
+variable "filename" { 
+	default = [
+		"/root/pets.txt"
+		"/root/dogs.txt"
+		"/root/cats.txt"
+	]
+}
+
+>> for_each : 
+- work with map or set variable
+
+e.g.:
+1)
+> main.tf 
+
+resource "local_file" "pet" {
+	filename = each.value
+	for_each = var.filename
+}
+
+> variables.tf
+
+variable "filename" { 
+	type = set(string)
+	default = [
+		"/root/pets.txt"
+		"/root/dogs.txt"
+		"/root/cats.txt"
+	]
+}
+
+2)
+> main.tf 
+
+resource "local_file" "pet" {
+	filename = each.value
+	for_each = toset(var.filename)
+}
+
+> variables.tf
+
+variable "filename" { 
+	type = list(string)
+	default = [
+		"/root/pets.txt"
+		"/root/dogs.txt"
+		"/root/cats.txt"
+	]
+}
+
+
+>>>> Version Constraints
+
+1) used specified version : 1.4.0
+
+terraform {
+	required_providers {
+		local = { 
+			source = "hashicorp/local"
+			varsion = "1.4.0"
+		}
+	}
+}
+resource "local_file" "pet" {
+	filename = each.value
+	for_each = toset(var.filename)
+}
+
+2) Specifc version not get downloaded
+	- version = "!= 2.0.0"
+	
+3) Use Lesser than given version
+	- version = "< 1.4.0"
+	
+4) User Greater than given version
+	- version = "> 1.1.0"
+	
+5) Combine the comparision operator to use specific version from given range
+	- version = "> 1.2.0, < 2.0.0, != 1.4.0"
+	
+6) download the specific version 
+	- version = "~> 1.2"  (download 1.2 or 1.2 to 1.9)
+	- version = "~> 1.2.0" (download 1.2.0 or 1.2.0 to 1.2.9)
+	
+------------------------------------------------------------------------------------------
+
+>>>> Terraform with AWS
+
+>> AWS IAM with Terraform
+
+provider "aws" {
+ region = "us-east-1" 
+ access_key = 
+ secret_key = 
+}
+resource "aws_iam_user" "admin-user" {
+  name = "gandhi"
+  tags = {
+    Description = "Technical Team lead"
+  }
+}
+
+
+>> uing .aws credentials
+[default]
+access_key = 
+secret_key = 
+
+-> provider.tf
+
+provider "aws" {
+ region = "us-east-1"
+ profile= "terraform"
+}
+
+-> main.tf
+
+resource "aws_iam_user" "admin-user" {
+  name = "sadhana"
+  tags = {
+    Description = "Technical Team lead"
+  }
+}
+
+>> IAM Policy resource
+
+e.g.: main.tf
+
+resource "aws_iam_user" "admin-user" {
+  name = "sadhana"
+  tags = {
+    Description = "Technical Team lead"
+  }
+}
+resource "aws_iam_policy" "adminUser" {
+	name = "AdminUsers"
+	policy = <<EOF
+	{
+		"Version": "2024-03-29",
+		"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": "*",
+				"Resource": "*"
+			}
+		]
+	}
+	EOF
+}
+
+>> Attach policy from json file to terraform
+
+e.g.: main.tf
+
+resource "aws_iam_user" "admin-user" {
+  name = "sadhana"
+  tags = {
+    Description = "Technical Team lead"
+  }
+}
+resource "aws_iam_policy" "adminUser" {
+	name = "AdminUsers"
+	policy = file("admin-policy.json")
+
+	EOF
+}
+resource "aws_iam_user_policy_attachment" "sadhana-admin-access" {
+	user = aws_iam_user.admin-user.name
+	policy_arn = aws_iam_policy.adminUser.arn
+}
+
+admin-policy.json
+
+{
+	"Version": "2024-03-29",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": "*",
+			"Resource": "*"
+		}
+	]
+}
+
+
+>>>> Terraform with S3
+
+e.g.: Create Bucket
+
+main.tf
+
+resource "aws_s3_bucket" "finance" {
+  bucket = "finance-20240329"
+  tags = {
+      Description = "Finance and Payroll"
+  }
+}
+
+e.g.: Create Bucket with Object and iam group who acces s3 bucket
+
+main.tf
+
+resource "aws_s3_bucket" "finance" {
+  bucket = "finance-20240329"
+  tags = {
+      Description = "Finance and Payroll"
+  }
+}
+resource "aws_s3_object" "finance-2024" {
+  content = "/root/finance/finance-2024.doc"
+  key     = "finance-2024.doc"
+  bucket  = aws_s3_bucket.finance.id
+}
+data "aws_iam_group" "finance-data" {
+  group_name = "finance-analysts"
+}
+
+e.g.: Bucket Policy
+
+main.tf
+
+resource "aws_s3_bucket" "finance" {
+  bucket = "finance-20240329"
+  tags = {
+      Description = "Finance and Payroll"
+  }
+}
+resource "aws_s3_object" "finance-2024" {
+  content = "/root/finance/finance-2024.doc"
+  key     = "finance-2024.doc"
+  bucket  = aws_s3_bucket.finance.id
+}
+data "aws_iam_group" "finance-data" {
+  group_name = "finance-analysts"
+}
+resource "aws_s3_policy" "finance-policy" {
+  bucket = aws_s3_bucket.finance.id
+  policy = <<EOF
+  {
+      "Version": "2024-03-29",
+        "Statement": [
+          {
+            "Action": "*"
+            "Effect": "Allow"
+            "Resource": "arn:aws:s3:::${aws_s3_bucket.finance.id}/*"
+            "Principal": {
+              "AWS": [
+                "${data.aws_iam_group.finance-data.arn}"
+              ]
+            }
+          }
+        ]
+  }
+  EOF
+}
+
+>>>> Terraform with DynamoDB
+
+e.g.: Create Table
+
+resource "aws_dynamodb_table" "project_sapphire_user_data" {
+  name           = "userdata"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "UserId"
+
+  attribute {
+    name = "UserId"
+    type = "N"
+  }
+}
+
+e.g.: Create table and add items in to it
+
+resource "aws_dynamodb_table" "project_sapphire_inventory" {
+  name           = "inventory"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "AssetID"
+
+  attribute {
+    name = "AssetID"
+    type = "N"
+  }
+  attribute {
+    name = "AssetName"
+    type = "S"
+  }
+  attribute {
+    name = "age"
+    type = "N"
+  }
+  attribute {
+    name = "Hardware"
+    type = "B"
+  }
+  global_secondary_index {
+    name             = "AssetName"
+    hash_key         = "AssetName"
+    projection_type    = "ALL"
+    
+  }
+  global_secondary_index {
+    name             = "age"
+    hash_key         = "age"
+    projection_type    = "ALL"
+    
+  }
+  global_secondary_index {
+    name             = "Hardware"
+    hash_key         = "Hardware"
+    projection_type    = "ALL"
+    
+  }
+}
+resource "aws_dynamodb_table_item" "upload" {
+  table_name = aws_dynamodb_table.project_sapphire_inventory.name
+  hash_key   = aws_dynamodb_table.project_sapphire_inventory.hash_key
+  item = <<EOF
+ {
+  "AssetID": {"N": "1"},
+  "AssetName": {"S": "printer"},
+  "age": {"N": "5"},
+  "Hardware": {"B": "true" } 
+
+
+>>>> What is Remote State and State Locking?
+
+- Automatically load and Upload State File
+- Many Backends Support State Locking 
+- Security
+
+>> Remote Backends with S3
+
+e.g.: 
+
+-> main.tf
+
+resource "local_file" "state" {
+  filename = "/root/${var.remote-state}"
+  content  = "This configuration uses ${var.remote-state} state"
+
+}
+
+-> terraform.tf
+
+terraform {
+  backend "s3" {
+    key = "terraform.tfstate"
+    region = "us-east-1"
+    bucket = "remote-state"
+    endpoint = "http://172.16.238.105:9000"
+    force_path_style = true
+
+
+    skip_credentials_validation = true
+
+    skip_metadata_api_check = true
+    skip_region_validation = true
+  }
+}
+
+-> variables.tf
+
+variable remote-state {
+    type = string
+    default = "remote"
+}
+variable local-state {
+    type = string
+    default = "local"
+}
+
+===========================================================================
+
+>>>> Practicals
+
+1) Create Bucket
+
+provider "aws" {
+  region = "us-east-1"
+  access_key = "<>"
+  secret_key ="<>"
+}
+
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "terraform-state-sammek"
+}
+
+2) Create User
+
+provider "aws" {
+  region = "us-east-1"
+  access_key = "<>"
+  secret_key ="<>"
+}
+
+resource "aws_iam_user" "admin-user" {
+  name = "gandhi"
+  tags = {
+    Description = "TechnicalTeam Lead"
+  }
+}
+
+3) Create Backend S3 and create user
+
+-> for this we need to create first s3 bucket and after that add Backend s3 terraform resource
+
+terraform {
+  backend "s3" {
+    bucket = "terraform-state-sammek"
+    key = "global/s3/terraform.tfstate"
+    region = "us-east-1"
+    encrypt = true
+    profile = "terraform"
+  }
+}
+
+provider "aws" {
+  access_key = 
+  secret_key =
+  region = "us-east-1"
+}
+
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "terraform-state-sammek"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_iam_user" "admin-user" {
+  name = "gandhi"
+  tags = {
+    Description = "TechnicalTeam Lead"
+  }
+}
+
+===========================================================================
+
+>>>> Terraform State Commands
+
+#terraform state list
+> output
+aws_iam_user.admin-user
+aws_s3_bucket.terraform_state
+
+> this will print only resource adress no other details
+
+#terraform state list aws_s3_bucket.terraform_state
+	- it will return matching resource address
+	
+#terraform state show aws_s3_bucket.terraform_state
+	- shows the attributes of single mentioned resource
+	
+#terraform state mv aws_dynamodb_table.state-locking aws_dynamodb_table.state-locking-db
+	- it will rename the resource name
+	
+#terraform state pull
+	- it will return stste file details
+	
+#terraform state pull | jq '.resources[] | select(.name == "state-locking-db")|.instances[].sattributes.hash_key'
+	- it will reurn "LockID"
+	
+#terraform state rm aws_s3_bucket.terraform_state
+	- it will remove resources / attribues from state file
+	- make sure you have to remove it from config file a well
+	
+===========================================================================
+
+>>>> AWS EC2 with Terraform
+
+provider "aws" {
+  access_key = "<>"
+  secret_key = "<>"
+  region     = "us-east-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0c101f26f147fa7fd"
+  instance_type = "t2.micro"
+  tags = {
+    Name        = "webserver"
+    Description = "An AWS Linux Web Server"
+  }
+  user_data     = <<-EOF
+                #!/bin/bash
+                yum install -y httpd
+                echo "This is a web server coming from ec2" >/var/www/html/index.html
+                systemctl enable --now httpd
+    EOF
+  key_name               = aws_key_pair.web.id
+  vpc_security_group_ids = [aws_security_group.ssh-access.id]
+}
+
+resource "aws_key_pair" "web" {
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCexVWFL8N/WH7rHZxqEHVqe39V9gyOglOLP4EJKWQTwkq9CarTE9Fmpla109Ps0jDRgzzIf5wJ8FpTmRKloF2XRi1JTgZ526c59Xda2Sb3xTYNk8BV1tY+BklACkm300e9e9oTAkI818cjJ06eWBIgUsaZS9iVIclmEo6DcentDxuQTrf1ddmAqF6mGxNTtNQSU1LiubT0su/1C79CGZRMlg8V3cDNRcyqXVyrz8oWAcciO+h1uHQBsl+l7uB61YV1RcOWXjp2EZSxPtVDoenn74zcdclYH5903b6yJyB0+p29uVl4FfZHKwiA7DW8xGF0/i1t4geWmWlHQKmMHIb imported-openssh-key"
+}
+
+
+resource "aws_security_group" "ssh-access" {
+  name        = "ssh-access"
+  description = "Allow ssh access from internet"
+  ingress = [{
+    description      = "SSH"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
+    self             = false
+  }]
+}
+
+output "publicip" {
+  value = aws_instance.webserver.public_ip
+}
+
+===========================================================================
+
+>>>> Terraform Provisioners (Optional)
+
+>> Remote Exec
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0c101f26f147fa7fd"
+  instance_type = "t2.micro"
+  tags = {
+    Name        = "webserver"
+    Description = "An AWS Linux Web Server"
+  }
+  provisioner	"remote-exec"	{
+		inline = [	"yum install -y httpd",
+					"echo "This is a web server coming from ec2" >/var/www/html/index.html",
+					"systemctl enable --now httpd",
+				 ]
+  key_name               = aws_key_pair.web.id
+  vpc_security_group_ids = [aws_security_group.ssh-access.id]
+}
+
+>> 	Authentication (Connection Block)
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0c101f26f147fa7fd"
+  instance_type = "t2.micro"
+  tags = {
+    Name        = "webserver"
+    Description = "An AWS Linux Web Server"
+  }
+  provisioner	"remote-exec"	{
+		inline = [	"yum install -y httpd",
+					"echo "This is a web server coming from ec2" >/var/www/html/index.html",
+					"systemctl enable --now httpd",
+				 ]
+	}
+  Connection {
+		typr		=	"ssh"
+		host		=	"self.public_ip"
+		user		=	"ubuntu"
+		private_key	=	file("/root/.ssh/web")
+  }
+  key_name               = aws_key_pair.web.id
+  vpc_security_group_ids = [aws_security_group.ssh-access.id]
+}
+
+>> Local Exec
+
+1) Normal 
+
+resource "aws_instance" "webserver" {
+	ami           = "ami-0c101f26f147fa7fd"
+	instance_type = "t2.micro"
+	
+	provisioner "local-exec"	{
+		command	=	"echo ${aws_instance.webserver.public_ip} >> /tmp/ips.txt"
+	}
+}
+
+> Output
+$cat /tmp/ips.txt
+54.214.68.27
+
+2) Destroy Time Provisioners
+
+provisioner "local-exec"	{
+		when 	= 	destroy
+		command	=	"echo Instance ${aws_instance.webserver.public_ip} Destroyed! >> /tmp/Instance_State.txt"
+}
+
+> Output
+$cat /tmp/Instance_State.txt
+Instance 54.214.68.27 Destroyed!
+
+3) Create Time Provisioners
+
+provisioner "local-exec"	{
+		when 	= 	create
+		command	=	"echo Instance ${aws_instance.webserver.public_ip} Created! >> /tmp/Instance_State.txt"
+}
+
+> Output
+$cat /tmp/Instance_State.txt
+Instance 54.214.68.27 Created!
+
+4) Provisioners on failure
+
+- on given wrong path it will get fail or continue
+
+provisioner "local-exec"	{
+		on-failure 	= 	fail
+		command		=	"echo Instance ${aws_instance.webserver.public_ip} >> /temp/Instance_State.txt"
+}
+
+And
+
+provisioner "local-exec"	{
+		on-failure 	= 	continue
+		command		=	"echo Instance ${aws_instance.webserver.public_ip} >> /temp/Instance_State.txt"
+}
+
+===========================================================================
+
+>>>> TERRAFORM IMPORT, TAINTING RESOURCES AND DEBUGGING 
+
+>> TERRAFORM TAINT
+
+#terraform taint
+
+#terraform untaint
+
+>> Debugging
+
+> Lg Level (set envirnmental variable)
+#export TF_LOG=<log_level>
+#export TF_LOG=TRACE
+
+#export TF_LOG_PATH=/tmp/terraform.log
+#head -10 /tmp/terraform.logs
+
+#unset TF_LOG_PATH
+
+>> Terraform Import
+
+> terraform import <resource_type>.<resource_name> <attribute>
+
+#terraform import aws_instance.webserver-2 i-0c101f26f147fa7fd
+
+===========================================================================
+
+>>>> Host Your Static Website on AWS S3 with Terraform
+
+1) terraform.tf
+
+# Terraform
+terraform {
+  required_version = "1.7.4"
+  required_providers {
+    aws = {
+        source = "hashicorp/aws"
+        version = "5.40.0"
+    }
+  }
+}
+
+#Provider
+provider "aws" {
+  profile = "default"
+  region = "ap-south-1"
+}
+
+
+2) bucket.tf
+
+# Create S3 Bucket
+resource "aws_s3_bucket" "terraform-demo-43234" {
+  bucket = "terraform-demo-43234"
+}
+
+# Upload file to S3
+resource "aws_s3_object" "terraform_index" {
+  bucket = aws_s3_bucket.terraform-demo-43234.id
+  key = "index.html"
+  source = "index.html"
+  content_type = "text/html"
+  etag = filemd5("index.html")
+}
+
+# S3 Web hosting
+resource "aws_s3_bucket_website_configuration" "terraform_hosting" {
+  bucket = aws_s3_bucket.terraform-demo-43234.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+
+3) policy.tf
+
+# S3 public access
+resource "aws_s3_bucket_public_access_block" "terraform-demo" {
+    bucket = aws_s3_bucket.terraform-demo-43234.id
+  block_public_acls = false
+  block_public_policy = false
+}
+
+# S3 public Read policy
+resource "aws_s3_bucket_policy" "open_access" {
+  bucket = aws_s3_bucket.terraform-demo-43234.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "Public_access"
+    Statement = [
+      {
+        Sid = "IPAllow"
+        Effect = "Allow"
+        Principal = "*"
+        Action = ["s3:GetObject"]
+        Resource = "${aws_s3_bucket.terraform-demo-43234.arn}/*"
+      },
+    ]
+  })
+  depends_on = [ aws_s3_bucket_public_access_block.terraform-demo ]
+}
+
+
+4) output.tf
+
+# Website URL
+output "website_url" {
+  value = "http://${aws_s3_bucket.terraform-demo-43234.bucket}.s3-website.${aws_s3_bucket.terraform-demo-43234.region}.amazonaws.com"
+}
+
+
+5) index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraform</title>
+</head>
+<body style="background-color: aquamarine;">
+    <h1 style="color: azure;">Welcome to Terraform</h1>
+</body>
+</html>
+
+===========================================================================
+
+
+terraform --version
+mkdir newterraproject1
+ls
+vim prog1.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+___________________________________________________________________________________
+
+provider "aws" {
+  region     = "us-west-2"
+  access_key = "my-access-key"
+  secret_key = "my-secret-key"
+}
+__________________________________________________________________________________________
+$ cat prog1.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region     = "ap-south-1"
+  access_key = 
+  secret_key = 
+}
+______________________________________________________________________
+resource "aws_instance" "web" {
+  ami           = "ami-01bd28d73d0053a15"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "HelloWorld"
+  }
+}
+__________________________________________________________________________________________________________________
+resource "aws_s3_bucket" "s3bucket" {
+  bucket = "my-sam-boom-1"
+
+  tags = {
+    Name        = "My bucket"
+    Environment = "Dev"
+  }
+}______________________________________________________________________________________________________
+resource "aws_iam_group" "developers" {
+  name = "developers"
+  path = "/users/"
+}
+
+___________________________________________________________________________________________
+resource "aws_vpc" "main" {
+  cidr_block       = "192.168.0.0/16"
+  instance_tenancy = "default"
+
+  tags = {
+    Name = "main"
+  }
+}
+__________________________________________________________________________________________________________________________
+resource "aws_vpc" "main" {
+  cidr_block       = "192.168.0.0/16"
+  instance_tenancy = "default"
+
+  tags = {
+    Name = "main"
+  }
+}
+
+resource "aws_subnet" "main" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "192.168.1.0/24"
+
+  tags = {
+    Name = "Main"
+  }
+}
+___________________________________________________________________________________________________________________________
+terraform init
+terraform validate
+terraform apply
+yes
+terraform destroy
+______________________________________________________________________________________________________________
+Main commands:
+  init          Prepare your working directory for other commands
+  validate      Check whether the configuration is valid
+  plan          Show changes required by the current configuration
+  apply         Create or update infrastructure
+  destroy       Destroy previously-created infrastructure
+
+All other commands:
+  console       Try Terraform expressions at an interactive command prompt
+  fmt           Reformat your configuration in the standard style
+  force-unlock  Release a stuck lock on the current workspace
+  get           Install or upgrade remote Terraform modules
+  graph         Generate a Graphviz graph of the steps in an operation
+  import        Associate existing infrastructure with a Terraform resource
+  login         Obtain and save credentials for a remote host
+  logout        Remove locally-stored credentials for a remote host
+  metadata      Metadata related commands
+  output        Show output values from your root module
+  providers     Show the providers required for this configuration
+  refresh       Update the state to match remote systems
+  show          Show the current state or a saved plan
+  state         Advanced state management
+  taint         Mark a resource instance as not fully functional
+  test          Execute integration tests for Terraform modules
+  untaint       Remove the 'tainted' state from a resource instance
+  version       Show the current Terraform version
+  workspace     Workspace management
+
+Global options (use these before the subcommand, if any):
+  -chdir=DIR    Switch to a different working directory before executing the
+                given subcommand.
+  -help         Show this help output, or the help for a specified subcommand.
+  -version      An alias for the "version" subcommand.
+__________________________________________________________________________________________________
+
+-> # cat ansible.cfg 
+[defaults]
+inventory = /root/test/inventory
+roles_path = /root/test/roles
+collections_path = /root/test/mycollections
+________________________________________________________
+-> cat inventory
+[web]
+192.168.0.205
+192.168.0.206
+#192.168.0.207

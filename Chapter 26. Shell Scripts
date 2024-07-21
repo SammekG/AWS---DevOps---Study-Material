@@ -1,0 +1,923 @@
+*********** Shell Scripts ***********
+
+--> Why Shel Scripts?
+- Automate daily backup
+- Automate Installation and Patching of software on multiple servers
+- Monitor system periodically
+- Raise alarms and send notification
+- Trouble shooting and audits
+- Productivity
+- Many more
+
+--> create your own script as command
+- first we need to create script (create-dir)
+- if we try to run that as a command it will give error : command not found...
+- we have to give path for our created script dir to commad dir
+- for this path we have to add our dir path:
+/root/bin:/root/bin:/root/.local/bin:/root/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+- to add our dir
+#export PATH=$PATH:/home/sammekgandhi
+- to chk path now
+which create-dir
+- now run directly as command
+#create-dir
+- success -command will run
+
+--> Variables
+- every variable name starts with $ sign
+- e.g: $mission_name
+- while setting valu to variable we do not give $ sign
+- when we call that variable we have to specify $ sign
+- variable name contains alphanumeric or underscore
+- it's case sensitive
+- variable name should not have dash (-)
+- e.g.:
+# This script creates a backup of a given file by creating a copy as bkp
+# For example some-file is backed up as some-file_bkp
+file_name="create-and-launch-rocket"
+cp $file_name ${file_name}_bkp
+
+--> command line arguments
+- at ommand line we pass variable value 
+- in script we call that value using $1
+- e.g. : create-dir sam
+	- here create-dir position is $0
+	- sam position is $1
+	- so the command line argument command will be : create-dir sam
+	- and in script we call like : DIR_NAME=$1
+-e.g.:
+country_name=$1
+country_capital=$2
+echo "Capital city of $1 is $2"
+
+--> Read Inputs
+- when we run any script we need to take value from prompt and it will reflect in scrpt
+- like : create-dir - <enter> - take input - samdir - in script we take this input as - 
+	read -p "Enter Dir Name : " dir_name
+	mkdir $dir_name
+
+--> Arithmetic Operations
+- expr
+- e.g:
+price=$(( $1 * $2 ))
+
+echo "The total price for items is ${price} dollars"
+
+- e.g.:
+baskets=4
+apples_per_basket=5
+
+total_apples=`expr $baskets \* $apples_per_basket`
+
+echo "Total Apples = $total_apples"
+
+- e.g.:
+num1=$1
+num2=$2
+num3=$3
+sum=$(( num1 + num2 + num3 ))
+average=$(echo "$sum / 3" | bc -l)
+echo $average
+
+--> Conditional Logic
+- if else condition
+---------------------------------------
+- e.g.:
+mission_name=$1
+
+mkdir $mission_name
+
+rocket-add $mission_name
+
+rocket-start-power $mission_name
+rocket-internal-power $mission_name
+rocket-start-sequence $mission_name
+rocket-start-engine $mission_name
+rocket-lift-off $mission_name
+
+rocket_status=$(rocket-status $mission_name)
+
+echo "The status of launch is $rocket_status"
+
+if [ $rocket_status = "failed" ]
+then
+  rocket-debug $mission_name
+fi
+---------------------------------------
+- e.g.: Create a shell script in the home directory called check_dir.sh. The script should print the line Directory exists if the directory /home/bob/caleston exists. If not, it should print Directory not found
+if [ -d "/home/bob/caleston" ]
+then
+  echo "Directory exists"
+else
+  echo "Directory not found"
+fi
+---------------------------------------
+- e.g.: Create a shell script in the home directory called check_greater.sh. The script should check the greater of the two command line arguments $1 and $2 and print which ever is greater
+if [ $1 -gt $2 ]
+then
+    echo $1
+else
+    echo $2
+fi
+---------------------------------------
+- e.g.: Develop a shell script that accepts the number of a month as input and prints the name of the respective month
+month_number=$1
+
+if [ -z $month_number ]
+then
+  echo "No month number given. Please enter a month number as a command line argument."
+  echo "eg: ./print-month-number 5"
+  exit
+fi
+
+if [[ $month_number -lt 1 ]] || [[ $month_number -gt 12 ]]
+then
+  echo "Invalid month number given. Please enter a valid number - 1 to 12."
+  exit
+fi
+
+if [ $month_number -eq 1 ]
+then
+  echo "January"
+elif [ $month_number -eq 2 ]
+then
+  echo "February"
+elif [ $month_number -eq 3 ]
+then
+  echo "March"
+elif [ $month_number -eq 4 ]
+then
+  echo "April"
+elif [ $month_number -eq 5 ]
+then
+  echo "May"
+elif [ $month_number -eq 6 ]
+then
+  echo "June"
+elif [ $month_number -eq 7 ]
+then
+  echo "July"
+elif [ $month_number -eq 8 ]
+then
+  echo "August"
+elif [ $month_number -eq 9 ]
+then
+  echo "September"
+elif [ $month_number -eq 10 ]
+then
+  echo "October"
+elif [ $month_number -eq 11 ]
+then
+  echo "November"
+elif [ $month_number -eq 12 ]
+then
+  echo December
+fi
+--------------------------------------
+
+--> For Loops
+- for do done
+- e.g.: Develop a new script at /home/bob/launch-rockets.sh to call the create-and-launch-rocket script to launch 5 rockets for the following missions using a for loop.
+lunar-mission, mars-mission, jupiter-mission, saturn-mission, mercury-mission
+for mission in lunar-mission mars-mission jupiter-mission saturn-mission mercury-mission
+do
+        bash /home/bob/create-and-launch-rocket $mission
+done
+-------------------
+- e.g.: Let us now update the script /home/bob/launch-rockets.sh to read mission names from a file.
+Mission names are located at /home/bob/mission-names.txt
+for mission_name in $(cat /home/bob/mission-names.txt)
+do
+    bash /home/bob/create-and-launch-rocket $mission_name
+done
+-------------------
+- e.g.: Create a simple script called loop.sh at /home/bob. The script should make use of a loop and print the numbers 31 to 40 with each number in a new line.
+for i in {31..40}
+do
+        echo $i
+done
+-------------------
+- e.g.: We have a few different applications running on this system. The list of applications is stored in the /home/bob/apps.txt file. Each application has it's logs stored in the /var/log/apps directory under a file with its name. Check it out!
+A simple version of the script has been developed for you named /home/bob/count-requests.sh, which inspects the log file of an application and prints the number of GET, POST, and DELETE requests. Update the script to use a for loop to read the list of applications from the apps.txt file, and count the number of requests for each application, and display it in a tabular format like this.
+echo -e " Log name   \t      GET      \t      POST    \t   DELETE "
+echo -e "------------------------------------------------------------"
+
+for app in $(cat /home/bob/apps.txt)
+do
+  get_requests=$(cat /var/log/apps/${app}_app.log | grep "GET" | wc -l)
+  post_requests=$(cat /var/log/apps/${app}_app.log | grep "POST" | wc -l)
+  delete_requests=$(cat /var/log/apps/${app}_app.log | grep "DELETE" | wc -l)
+  echo -e " ${app}    \t ${get_requests}    \t    ${post_requests}   \t   ${delete_requests}"
+
+done
+-------------------
+- e.g. : We have some images under the directory /home/bob/images. Develop a script /home/bob/rename-images.sh to rename all files within the images folder that has extension jpeg to jpg. A file with any other extension should remain the same.
+Tip: Use a for loop to iterate over the files within /home/bob/images
+Tip: Use an if conditional to check if the file extension is jpeg.
+Tip: Use mv to rename a file.
+To replace jpeg to jpg in a filename use echo user1.jpeg | sed 's/jpeg/jpg/g'.
+for file in $(ls images)
+do
+        if [[ $file = *.jpeg ]]
+                then
+                new_name=$(echo $file| sed 's/jpeg/jpg/g')
+                mv images/$file images/$new_name
+        fi
+done
+-------------------
+
+--> Loops - While
+- while do done
+- e.g.: Let's update our script to take into consideration the time a rocket spends in a launching state.
+The script is available at the path /home/bob/create-and-launch-rocket. Add a while loop before the if conditional statements that checks the status of rocket to wait until the rocket is in a launching state
+mission_name=$1
+
+mkdir $mission_name
+
+rocket-add $mission_name
+
+rocket-start-power $mission_name
+rocket-internal-power $mission_name
+rocket-start-sequence $mission_name
+rocket-start-engine $mission_name
+rocket-lift-off $mission_name
+
+rocket_status=$(rocket-status $mission_name)
+
+echo "The status of launch is $rocket_status"
+
+while [ $rocket_status = "launching" ]
+do
+  sleep 2
+  rocket_status=$(rocket-status $mission_name)
+done
+
+if [ $rocket_status = "failed" ]
+then
+  rocket-debug
+fi
+-------------------
+- e.g.: A script called print-numbers.sh is created in the home directory. There is a syntax error in the script. Identify it and fix it so that it works
+Execute the script with a number as an argument - ./print-numbers.sh 10. Do not make any other changes to the script other than fixing the error.
+Note :- Run the command chmod +x to make it script executable .
+to_number=$1
+number=0
+while [ $number -lt $to_number ]
+do
+  echo $(( number++ ))
+done
+-------------------
+- e.g.: Let us now build a menu driven calculator program. Develop a script /home/bob/calculator.sh that when run:
+Shows a menu-driven program with the following options:
+Add
+Subtract
+Multiply
+Divide
+Quit
+Depending on the input, the program must ask for 2 numbers - Number1 and Number2 and then print the result in the form Answer=6.
+The program must show the menu again until the user selects option 5 to quit.
+Note:- Script should be in an executable format; run the command chmod +x to make it executable.
+while true
+do
+  echo "1. Add"
+  echo "2. Subtract"
+  echo "3. Multiply"
+  echo "4. Divide"
+  echo "5. Quit"
+
+  read -p "Enter your choice: " choice
+
+  if [ $choice -eq 1 ]
+  then
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 + $number2 ))
+  elif [ $choice -eq 2 ]
+  then
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 - $number2 ))
+  elif [ $choice -eq 3 ]
+  then
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 * $number2 ))
+  elif [ $choice -eq 4 ]
+  then
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 / $number2 ))
+  elif [ $choice -eq 5 ]
+  then
+    break
+  fi
+
+done
+-------------------
+
+--> Case Statements
+- e.g.: A script called print-pkm.sh is created in the home directory. There are multiple syntax errors in the script. Identify and fix those so that the script works
+Execute the script with a distribution name as an argument - ./print-pkm.sh Fedora.
+os=Fedora
+
+case $os in
+  "Fedora") echo "Uses RPM package manager" ;;
+
+  "RHEL") echo "Uses RPM package manager" ;;
+
+  "CentOS") echo "Uses RPM package manager" ;;
+
+  "Debian") echo "Uses DEB package manager" ;;
+
+  "Ubuntu")
+            echo "Uses DEB package manager" ;;
+esac
+-------------------
+- e.g.: The script we developed in one of the labs earlier called print-month-name.sh is placed in the home directory. Update the script to use case statements.
+Execute the script with a number as an argument - ./print-month-name.sh 10 should print October. Do not make any other changes to the script other than fixing the error.
+month_number=$1
+
+if [ -z $month_number ]
+then
+  echo "No month number given. Please enter a month number as a command line argument."
+  echo "eg: ./print-month-number 5"
+  exit
+fi
+
+if [[ $month_number -lt 1 || $month_number -gt 12 ]]
+then
+  echo "Invalid month number given. Please enter a valid number - 1 to 12."
+  exit
+fi
+
+case $month_number in
+  1) echo "January" ;;
+  2) echo "February" ;;
+  3) echo "March" ;;
+  4) echo "April" ;;
+  5) echo "May" ;;
+  6) echo "June" ;;
+  7) echo "July" ;;
+  8) echo "August" ;;
+  9) echo "September" ;;
+  10) echo "October" ;;
+  11) echo "November" ;;
+  12) echo "December" ;;
+esac
+-------------------
+- e.g.: Let us now improve the calculator script we built in the previous lecture to use case statements.
+The script is available at the path /home/bob/calculator.sh. Replace the if conditionals with case statements.
+while true
+do
+  echo "1. Add"
+  echo "2. Subtract"
+  echo "3. Multiply"
+  echo "4. Divide"
+  echo "5. Quit"
+
+  read -p "Enter your choice: " choice
+
+  case $choice in
+    1)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 + $number2 ))
+        ;;
+    2)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 - $number2 ))
+        ;;
+
+    3)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 * $number2 ))
+        ;;
+    4)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 / $number2 ))
+        ;;
+    5)
+        break
+        ;;
+  esac
+
+done
+-------------------
+- e.g.: Now, let's improve the calculator.sh the script even further by adding another option to calculate the average of two numbers.
+The option number 5 should calculate the average and option 6 should quit the script.
+while true
+do
+  echo "1. Add"
+  echo "2. Subtract"
+  echo "3. Multiply"
+  echo "4. Divide"
+  echo "5. Average"
+  echo "6. Quit"
+
+  read -p "Enter your choice: " choice
+
+  case $choice in
+    1)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 + $number2 ))
+        ;;
+    2)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 - $number2 ))
+        ;;
+
+    3)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 * $number2 ))
+        ;;
+    4)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        echo Answer=$(( $number1 / $number2 ))
+        ;;
+    5)
+        read -p "Enter Number1: " number1
+        read -p "Enter Number2: " number2
+        sum=$(( number1 + number2 ))
+        echo Answer=$(echo "$sum / 2" | bc -l)
+        ;;
+    6)
+        break
+        ;;
+  esac
+
+done
+-------------------
+- e.g.: A script called print-color.sh is created in the home directory. This script accepts a single command-line variable, which, if set to red or green, prints a colored sentence accordingly.
+Update this script so that if we input any other color or value besides red or green, it should print the sentence red and green are the only choices.
+color=$1
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+
+
+          case $color in
+                    red) echo "${red}this is red${reset}";;
+                    green) echo "${green}this is green${reset}";;
+                    *) echo "red and green are the only choices"
+            esac
+-------------------
+
+--> Shebang
+- Bourne Shell (sh)
+- Debian Almquist Shell (dash)
+- Bourne again Shell (bash)
+- Shebang line : #!/bin/bash   Or   #!/bin/sh
+- it will tell interpreter to run on which shell
+
+--> Exit Codes
+- last command exit status : echo $? (0 is success)
+- e.g.: Let's update our script to exit with the correct exit code.
+The script is available at the path /home/bob/create-and-launch-rocket. Update the script to exit with exit code 25 if the status is failed, after printing the debug reason.
+mission_name=$1
+
+mkdir $mission_name
+
+rocket-add $mission_name
+
+rocket-start-power $mission_name
+rocket-internal-power $mission_name
+rocket-start-sequence $mission_name
+rocket-start-engine $mission_name
+rocket-lift-off $mission_name
+
+rocket_status=$(rocket-status $mission_name)
+
+echo "The status of launch is $rocket_status"
+
+if [ $rocket_status = "launching" ]
+then
+  sleep 2
+  rocket_status=$(rocket-status $mission_name)
+fi
+
+if [ $rocket_status = "failed" ]
+then
+  rocket-debug
+  exit 25
+fi
+-------------------
+
+--> Functions
+- Break up large script that performs many diffrent tasks:
+	- Installing packages
+	- Adding users
+	- Configuring firewalls
+	- Perform mathematical calculation
+- e.g.: 
+function prepare-directory-structure(){
+  mkdir apps
+  cd apps
+  mkdir app1 app2 app3
+  touch app1/logs app2/logs app3/logs
+}
+
+prepare-directory-structure
+-------------------
+- e.g.:
+function add(){
+  sum=$(( $1 + $2 ))
+  echo $sum
+}
+
+result=$(add 3 5)
+echo "The result is $result"
+-------------------
+- e.g.:
+#!/bin/bash
+function read_numbers(){
+  read -p "Enter Number1: " number1
+  read -p "Enter Number2: " number2
+}
+
+while true
+do
+  echo "1. Add"
+  echo "2. Subtract"
+  echo "3. Multiply"
+  echo "4. Divide"
+  echo "5. Quit"
+
+  read -p "Enter your choice: " choice
+
+  case $choice in
+    1)  read_numbers
+        echo $(( $number1 + $number2 )) ;;
+    2)
+        read_numbers
+        echo $(( $number1 - $number2 )) ;;
+
+    3)
+        read_numbers
+        echo $(( $number1 * $number2 )) ;;
+
+    4)
+        read_numbers
+        echo $(( $number1 / $number2 )) ;;
+
+    5)  break
+  esac
+
+done
+-------------------
+- e.g.: 
+function launch_rocket(){
+  mission_name=$1
+
+  mkdir $mission_name
+
+  rocket-add $mission_name
+
+  rocket-start-power $mission_name
+  rocket-internal-power $mission_name
+  rocket-start-sequence $mission_name
+  rocket-start-engine $mission_name
+  rocket-lift-off $mission_name
+
+  rocket_status=$(rocket-status $mission_name)
+
+  echo "The status of launch is $rocket_status"
+
+  if [ $rocket_status = "launching" ]
+  then
+    sleep 2
+    rocket_status=$(rocket-status $mission_name)
+  fi
+
+  if [ $rocket_status = "failed" ]
+  then
+    rocket-debug
+    exit 1
+  fi
+}
+launch_rocket $1
+-------------------
+
+--> Project - KodeKloud e-commerce application
+- LAMP stack application (Linux Apache MySQL/MariaDB PHP)
+- Project Steps :
+# Introduction
+
+This is a sample e-commerce application built for learning purposes.
+
+Here's how to deploy it on CentOS systems:
+
+## Deploy Pre-Requisites
+
+1. Install FirewallD
+
+```
+sudo yum install -y firewalld
+sudo systemctl start firewalld
+sudo systemctl enable firewalld
+sudo systemctl status firewalld
+```
+
+## Deploy and Configure Database
+
+1. Install MariaDB
+
+```
+sudo yum install -y mariadb-server
+sudo vi /etc/my.cnf
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+```
+
+2. Configure firewall for Database
+
+```
+sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
+sudo firewall-cmd --reload
+```
+
+3. Configure Database
+
+```
+$ mysql
+MariaDB > CREATE DATABASE ecomdb;
+MariaDB > CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
+MariaDB > GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'localhost';
+MariaDB > FLUSH PRIVILEGES;
+```
+
+> ON a multi-node setup remember to provide the IP address of the web server here: `'ecomuser'@'web-server-ip'`
+
+4. Load Product Inventory Information to database
+
+Create the db-load-script.sql
+
+```
+cat > db-load-script.sql <<-EOF
+USE ecomdb;
+CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+
+INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png");
+
+EOF
+```
+
+Run sql script
+
+```
+
+sudo mysql < db-load-script.sql
+```
+
+
+## Deploy and Configure Web
+
+1. Install required packages
+
+```
+sudo yum install -y httpd php php-mysqlnd
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+```
+
+2. Configure httpd
+
+Change `DirectoryIndex index.html` to `DirectoryIndex index.php` to make the php page the default page
+
+```
+sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+```
+
+3. Start httpd
+
+```
+sudo systemctl start httpd
+sudo systemctl enable httpd
+```
+
+4. Download code
+
+```
+sudo yum install -y git
+sudo git clone https://github.com/kodekloudhub/learning-app-ecommerce.git /var/www/html/
+```
+
+5. Update index.php
+
+Update [index.php](https://github.com/kodekloudhub/learning-app-ecommerce/blob/13b6e9ddc867eff30368c7e4f013164a85e2dccb/index.php#L107) file to connect to the right database server. In this case `localhost` since the database is on the same server.
+
+```
+sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
+
+              <?php
+                        $link = mysqli_connect('172.20.1.101', 'ecomuser', 'ecompassword', 'ecomdb');
+                        if ($link) {
+                        $res = mysqli_query($link, "select * from products;");
+                        while ($row = mysqli_fetch_assoc($res)) { ?>
+```
+
+> ON a multi-node setup remember to provide the IP address of the database server here.
+```
+sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
+```
+
+6. Test
+
+```
+curl http://localhost
+```
+-------------------
+
+- Project using Shell Script : 
+Develop a shell script - /home/bob/deploy-ecommerce-application.sh - to automate the deployment of the KodeKloud E-Commerce Application. Click on the tab called documentation on the top-right of the terminal.
+You may view the web application to verify by clicking on the KodeKloud E-Commerce Application tab at the top of your terminal. Ensure the web application is accessible visible and it lists all products.
+----------------------------------------------
+#!/bin/bash
+#
+# Automate ECommerce Application Deployment
+# Author: Mumshad Mannambeth
+
+#######################################
+# Print a message in a given color.
+# Arguments:
+#   Color. eg: green, red
+#######################################
+function print_color(){
+  NC='\033[0m' # No Color
+
+  case $1 in
+    "green") COLOR='\033[0;32m' ;;
+    "red") COLOR='\033[0;31m' ;;
+    "*") COLOR='\033[0m' ;;
+  esac
+
+  echo -e "${COLOR} $2 ${NC}"
+}
+
+#######################################
+# Check the status of a given service. If not active exit script
+# Arguments:
+#   Service Name. eg: firewalld, mariadb
+#######################################
+function check_service_status(){
+  service_is_active=$(sudo systemctl is-active $1)
+
+  if [ $service_is_active = "active" ]
+  then
+    echo "$1 is active and running"
+  else
+    echo "$1 is not active/running"
+    exit 1
+  fi
+}
+
+#######################################
+# Check the status of a firewalld rule. If not configured exit.
+# Arguments:
+#   Port Number. eg: 3306, 80
+#######################################
+function is_firewalld_rule_configured(){
+
+  firewalld_ports=$(sudo firewall-cmd --list-all --zone=public | grep ports)
+
+  if [[ $firewalld_ports == *$1* ]]
+  then
+    echo "FirewallD has port $1 configured"
+  else
+    echo "FirewallD port $1 is not configured"
+    exit 1
+  fi
+}
+
+#######################################
+# Check if a given item is present in an output
+# Arguments:
+#   1 - Output
+#   2 - Item
+#######################################
+function check_item(){
+  if [[ $1 = *$2* ]]
+  then
+    print_color "green" "Item $2 is present on the web page"
+  else
+    print_color "red" "Item $2 is not present on the web page"
+  fi
+}
+
+echo "---------------- Setup Database Server ------------------"
+
+# Install and configure firewalld
+print_color "green" "Installing FirewallD.. "
+sudo yum install -y firewalld
+
+print_color "green" "Installing FirewallD.. "
+sudo systemctl start firewalld
+sudo systemctl enable firewalld
+
+# Check FirewallD Service is running
+check_service_status firewalld
+
+# Install and configure Maria-DB
+print_color "green" "Installing MariaDB Server.."
+sudo yum install -y mariadb-server
+
+print_color "green" "Starting MariaDB Server.."
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+# Check FirewallD Service is running
+check_service_status mariadb
+
+# Configure Firewall rules for Database
+print_color "green" "Configuring FirewallD rules for database.."
+sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
+sudo firewall-cmd --reload
+
+is_firewalld_rule_configured 3306
+
+
+# Configuring Database
+print_color "green" "Setting up database.."
+cat > setup-db.sql <<-EOF
+  CREATE DATABASE ecomdb;
+  CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
+  GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'localhost';
+  FLUSH PRIVILEGES;
+EOF
+
+sudo mysql < setup-db.sql
+
+# Loading inventory into Database
+print_color "green" "Loading inventory data into database"
+cat > db-load-script.sql <<-EOF
+USE ecomdb;
+CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+
+INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png");
+
+EOF
+
+sudo mysql < db-load-script.sql
+
+mysql_db_results=$(sudo mysql -e "use ecomdb; select * from products;")
+
+if [[ $mysql_db_results == *Laptop* ]]
+then
+  print_color "green" "Inventory data loaded into MySQl"
+else
+  print_color "green" "Inventory data not loaded into MySQl"
+  exit 1
+fi
+
+
+print_color "green" "------------ Setup Database Server - Finished -------------"
+
+print_color "green" "---------------- Setup Web Server ------------------"
+
+# Install web server packages
+print_color "green" "Installing Web Server Packages .."
+sudo yum install -y httpd php php-mysqlnd
+
+# Configure firewalld rules
+print_color "green" "Configuring FirewallD rules.."
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+
+is_firewalld_rule_configured 80
+
+# Update index.php
+sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+
+# Start httpd service
+print_color "green" "Start httpd service.."
+sudo systemctl  start httpd
+sudo systemctl enable httpd
+
+# Check FirewallD Service is running
+check_service_status httpd
+
+# Download code
+print_color "green" "Install GIT.."
+sudo yum install -y git
+sudo git clone https://github.com/kodekloudhub/learning-app-ecommerce.git /var/www/html/
+sudo sed -i 's#// \(.*mysqli_connect.*\)#\1#' /var/www/html/index.php
+sudo sed -i 's#// \(\$link = mysqli_connect(.*172\.20\.1\.101.*\)#\1#; s#^\(\s*\)\(\$link = mysqli_connect(\$dbHost, \$dbUser, \$dbPassword, \$dbName);\)#\1// \2#' /var/www/html/index.php
+
+print_color "green" "Updating index.php.."
+sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
+
+print_color "green" "------------ Setup Web Server - Finished --------------"
+
+# Test Script
+web_page=$(curl http://localhost)
+
+for item in Laptop Drone VR Watch Phone
+do
+  check_item "$web_page" $item
+done

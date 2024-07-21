@@ -1,0 +1,239 @@
+********************* RDS - Database *********************
+
+>> Data
+-> Random (unorganised) - unstructured - OS(file/directory) - S3
+-> Semi - structured - key-value pair - No-SQL -> MongoDB/DynamoDB(AWS) - flexible
+-> Highly - structured - DBMS - RDBMS - Table format (rows and columns) - Oracle/MsSQL/MySQL
+
+>> Database Features :
+- Row level lock
+- Million Billions records
+- Commited / Rollback
+- Redo Log - Rebuild
+- Check Point
+- Indexing - Btree - Bitmap
+
+>> ETL Tool (to transfer unstructured or semi structured data to DBMS/RDBMS)
+- Data Stage
+- Infomaticale
+
+>> RDBMS database
+- Oracle
+- MySQL
+- MsSQL
+- postgresql
+- Aurora
+- MariaDB
+- Db2
+
+>> IAAS 
+-> EBS - VPC - ec2 - linux/windows - oracle/mssql - Environment/App 
+
+>> PAAS (RDS)
+-> EBS - VPC - ec2 - OS-> preinstalled - DB->preinstalled - app/client
+- Oracle
+- MySQL
+- MsSQL
+- postgresql
+- Aurora
+- MariaDB
+- Db2
+
+>> DMS (database migration service)
+
+>> What is mean by Burstable? 
+->  
+
+>> #yum whatprovides *bin/mysql
+
+>> Connect to database
+# mysql -h my-rds-cluster.c1uwqyqa63t1.ap-south-1.rds.amazonaws.com -u admin2024 -p
+
+>> Show All Database
+MySQL [(none)]> show databases;
+
+>> Create databae
+MySQL [(none)]> create database education;
+
+>> Master - Slave configuration - RAC (real application cluster)
+
+>> Read Replicas
+
+-------------
+
+>> AWS RDS
+
+-> Overview of RDS and its benefits
+- High availability and adaptability
+- Lower risk of hardware failure and downtime
+- Easier managing desaster recovery capabilities
+- Easier maintaning security and compliance standards
+- Reduce dependency on internal IT resources for database management and support
+
+-> Different Database Engines in RDS
+1) Postgresql on RDS
+- When you need a feature-rich, open source relational database system
+- When you need powerful indexing capablities and suport for complex queries
+- When you prioritize flexiblity and extensibility over ease of use
+- Atlassian, Blackboard and Amazon (retail wing) are few of the notable AWS RDS PostgreSQL customers
+
+2) MariaDB on RDS
+- When you need a feature-rich, open source relational database system
+- When you want a drop-in replacement for MySQL
+- When you value the open-source nature and compatability with MySQL ecosystem
+- When you require high availability and scalablity option
+
+3) MSSQL on RDS
+- When you are working in a Windows environment and prefer a Microsoft product
+- When you need strong integration with other microsoft technologies and tools
+- When you require enterprize level features such as advanced security and high availability
+- When you have a large budget and can invest in a commercial database solution
+
+4) Oracle on RDS
+- When you need advance security features and comprehencive data management
+- When you prioritize vendor support and have specific requirements that lign with oracle's offerings
+- When you are deling with crucial financial data applications
+- Customers: TrueMoney, Shopdirect, Open Universities Australia
+
+5) Mysql on RDS
+- When your application or project is based on a LAMP (Linux, Apache, MySQL, PHP/Python/Perl) stack
+- When you have a smaller budget and need a cost-effective solution
+- Customers: Airbnb, Freshworks, Flipboard
+
+-> RDS Instance types/families
+1) General Purpose 
+2) Memory Optimized 
+
+- Balance Performance
+	- Good compromise between CPU performance, memory and network capabilities
+	- Best suited for applications not receiving heavy traffic loads
+- Burstable performance
+	- Accumulate CPU credits during periods of low utilization
+	- These credits can be used during spikes in CPU demand
+	
+-> AWS RDS Storage
+1) General purpose SSD
+- offers cost effective storage
+- running on Medium size DB instance
+- development and testing environment
+- 3 IOPS/GB and burst up to 3000 IOPS
+
+2) Provisioned IOPS SSD
+- I/O-intensive workloads and backed with SSD-backed storage
+- Low I/O latency and consistent I/O throughput
+- Best suitable for production environments
+- Minimum storage size is 100GB and Maximum is 16TB
+
+3) Magnetic
+- One of the initial storage types available when RDS was first launched but has been largely replaced by more modern and performant storage options
+- relies on traditional HDDs for data storage. HDDs offer slower performance compared to newer storage techologies like SSDs
+- Was being phased out and was no longer available for some newer database egine version and instance type.
+
+-> Read Replicas
+- Read only copy of a DB instance
+- Reduce the load on your primary DB instance by routing queries from your applications to the read replica
+- Elastically scal out beyound the capacity constraints of a single DB instance for read-heavy database workloads
+- Promote a read replica to a standalone instance as a disaster recovery solution if the primary DB instance fails
+
+-> Single vs multi-az instance deployment vs multi-az cluster deployment
+
+-> Blue/Green Deployments
+- Test database changes in a safe staging environment without affecting the production environment
+- The switchover between Blue to Green tipically takes under a minutem with no data loss and no need for application changes
+- The resource in the blue and green environments must be in the same AWS account
+- for multi account - This setup is expensive becaue two MySQL clusters are running in parallel
+
+-> Optimized Reads/Writes
+- With RDS optimized Reads turned on, your DB instance achive faster query performance through the use of an instance store
+- instance store provides temporory block-level storage for your DB instance 
+- The storage is located on Non-Volatile memory express (NVMe) solid state drive(SSDs) that are physicaly attached to the host server
+- This storage is optimized for low latency, high random I/O performance, and high sequncial read throughput
+
+-> Understanding RDS Networking and Securities
+
+> Why do we have to secure our database?
+- Data Protection
+- Legal Compliance
+- Business analytics, Machine learning
+- Continuity and reliablity of application
+
+> How do we secure our database?
+- Basics of RDS Networking and security
+	- Database authentication and access management with amazon RDS
+	- Password management with amazon RDS and AWS secret manager
+	- Infrastructure security in Amazon RDS
+	- Security best practices for Amazon RDS
+	- Controlling access with security groups
+- RDS Proxy
+	- This improves application scalablity by pooling and sharing database connections.
+	- It makes applications more reslient to database failures by automatically connected to a standby DB instance while preserving application connection.
+	- This allow you to enforce IAM authentication for databases and securly store credentials in AWS secrets manager.
+	- This connection pool approach avoids the memory and CPU overheds of opening a new databse connection each time.
+	- This queues or throttlesapplication connections that can't be served immediately from the pool of connections, 	maitaining predictable 	performance of the load that can be served.
+	- This reduce the overhead to process credentials and establish a secure connection for each new connection, which can be handeled on behalf of the database.
+
+> Password management with Amazon RDS and AWS Secrets Manager
+- RDS automatically generates database credentials
+- Stores RDS database credentials in AWS secrets Manager directly; other applications can use it from a single controlled source
+- Rotates database credentials regulerly, without requiring application changes
+- Secret manages allows fine-grained control of access to database credentials in secrets using IAM
+
+> Infrastructure security in Amazon RDS
+
+> Security Best Practices for Amazon RDS
+- Create an individual uer for each person who manages amazon RDS resources, including yourself. Don't use AWS root credentials to manage Amanon RDS resources.
+- Grant each user the minimum set of permissions required to perform his or her duties.
+- Use IAM groups to effectively manage permissions for 	multiple users.
+- Rotate your IAM credentials regulerly.
+- Configure AWS secret manager to automatically rotate the secrets for Amazon RDS.
+
+> Controlling access with security groups
+- security groups are the first line of defence for your databae.
+- VPC security groups control the access that trafic has in and out of a DB instance.
+- By default, network access is turned off for a DB instance.
+- You can specify rules in a security group that allow access from an IP address range, port, or security group.
+- You can specify up to 20 rules in a security group.
+
+-> Backup and Restore with RDS
+- Backup storage for each AWS region is composed of the automated backups and manual DB snapshots for that Region
+- Total backup storage space equals the sum of the storage for all backups in that region.
+- Backups are stored in Amazon S3
+- Automated backups occur daily during the 	preferred backup window
+- Automted backups are not created when a DB instance or cluster is stopped
+
+-> AWS Aurora
+> What is AWS aurora?
+- Enterpeise database at open-source pricing
+- Delivers as managed srvice
+
+> Features
+- Speed and availability of high-end commercial database
+- Drop-in compatability qith MySQL and PostgreSQL
+- Simple pay as you go pricing 
+- Full managed service, automating administrative task
+
+> Aurora Architecture vs RDS; What's different?
+1) Storage architecture
+- Unlike RDS, which uses standard storage, Aurora uses a distributed storage architecture
+- It replicate data across ultiple nodes, providing better performance and fault toarance
+2) Performance
+- Aurora architecture makes is more efficient for read heavy workloads
+- It offloads reads to replicas, reducing the load on the primary instance
+3) Replication
+- Aurora has a quoram -based approach, which allows for faster crash recovery and less replication lag
+4) Automatic failure
+- Aurora provides automated failover with zero data loss, while RDS may experience some data loss during failover
+5) Backup and Restore
+- Aurora backups are continues and incremental, reducing backup time and improving restore performance compared to RDS
+
+-> Monitoring RDS databases
+- proactive issue detection
+- optimal performance
+- availability and reliablity
+- capacity planning and scaling
+
+> How can i monitor AWS database?
+- Set up CloudWatch integrations to monitor key RDS metrics
+- AWS RDS performance insights
+- AWS RDS long-running query logs
+- Adapting AWS RDS recommendation

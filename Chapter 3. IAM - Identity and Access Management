@@ -1,0 +1,263 @@
+IAM is a global service. IAM does not require region selection.
+
+IAM is a cloud based autherization and authentication service.
+
+You use IAM to control who is authenticated (signed in) and authorized (has permissions) to use resources.
+
+**Accessable through 12 digit account number
+
+>> User is a physical identity
+
+>> Group ls a logical identity
+
+>> Types of Authentication?
+- Local (System)
+- Roming (AD)
+- Cloud
+
+>> Two main Things handle by IAM
+1) Authentication
+- who you are (user id pass)
+- Prove your identity
+
+2) Autherization
+- what are you allow to do (permission)
+- what permission you have
+
+>> Benefites and Features Of IAM :
+
+1) Free
+2) Global
+3) Isolation (Tenancy)
+4) HA and HS (Highly Available and Highly Scalable)
+5) AD/LDAP --->> IAM (Access through Federation service)
+6) OAuth2 (single user multiple account)
+7) Fine Granular Permission
+8) No servers to manage
+9) No patching
+10) No security issues
+11) PCI (payment card industry) - DSS (Data security standard) - Security
+12) No sharing of credentials
+
+>> Three Main Identity of IAM
+1) User
+2) Group
+3) Role
+
+>> AWS Access From :
+
+1) GUI (Design) - AWS Console
+2) AWS CLI (Automation)
+3) SDK (API) - Programmatic access
+
+Two types of users in AWS
+----------------
+1. Root user -- who has created the account. 
+who will be paying the bills. the highest accesses
+2. IAM user -- which will be created by ROOT user for further 
+work/access/management/activities. Restricted access.
+
+Tags (optional)
+---------
+
+IAM tags are key-value pairs you can add to your user. 
+Tags can include user information, such as an email address, or can be descriptive, 
+such as a job title. 
+You can use the tags to organize, track, or control access for this user
+
+JSON- javascript object notataion
+csv, tsv
+dfghj	fhgyhkujl	fghjujk	fghjk	ghjkl
+dfghj,dfghj,dtyguhij,rtyguhij,rtyfugihj
+{"name":"keyur","mobileNo":"7387029671"} - JSON
+key:value
+key:value
+
+ARN (amazon resource name)
+--------
+	arn:aws:iam::560854431334:user/keyur
+	
+	arn:
+	aws:
+	iam: --service name
+	:331026266777: --account number or allias name
+	#user/ --actual task/activity
+	anurag --resource
+	
+	arn:aws:iam::331026266777:user/anurag
+	
+	arn:aws:iam::aws:policy/IAMReadOnlyAccess
+ 
+the method of nomenclature 
+
+Policy ( access/permission/granting access...only only Policy)
+----------
+The only way in which you can grant permission to an entity ( user/ group/ Role)
+
+set of permissions
+
+JSON- JSON (JavaScript Object Notation) 
+is a lightweight data-interchange format. 
+It is easy for humans to read and write. 
+It is easy for machines to parse and generate.
+
+We will attach Policy to a user and then USER will get all the permissions avaialble in that Policy
+
+Types of policy
+----------
+1. inline policy -- need to create one policy for one user. not reusable. 
+will not be suitable to be used.
+				 -- deleted a USER, 
+				 related Policy that will also be deleted
+2. managed policy -- it is reusable. One policy can be attached to multiple users. 
+Who will create/maintain policy?
+		1. customer managed policy -- you will create/maintain policy. 1/2 % 
+		not everyone is comfortable in JSON
+		
+		2. AWS managed policy -- AWS has created alot of policies. 99% - 
+		which can be used by USERS.
+		
+Key:value
+Dictionary
+
+parse: to read, to scan through
+
+IAMReadOnlyAccess
+
+User Groups
+----------------
+a collection of Users who wants to share same access level
+
+MFA ( multi factor authentication)
+----------------------
+2nd factor to authenticate your Root account.
+
+Can be enabled at IAM user also.
+
+Roles
+----------
+-----------
+Roles in AWS
+
+it is a trust between two service to access each other
+
+Access Key ID:
+<>
+Secret Access Key:
+<>
+
+Admin group has been create. now add ROHAN user in that
+
+Attach IAMReadOnlyAccess to Admin group.
+
+aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/IAMFullAccess --group-name ba
+
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/IAMReadOnlyAccess
+
+Most of activities which can be performed from AWS Console, can also be performed with AWS CLI.
+
+-------------------------------------------------------------------------
+
+>> Once user created by default it's Deny All - Implicit Deny Policy
+
+>> In AWS all policies write In JSON format
+
+Policy Contains (JASON):
+- Principal
+- Effect
+- Action
+- Resource
+- Condition
+
+>> Policies Types
+1) inline policy
+2) managed policy
+	1) AWS Manages Policy
+	2) Customer Managed Policy (design by user)
+
+>> CLI and SDK access by Access key and secret access key
+
+>> IAM Roles :
+
+- Role is not a physical identity 
+But
+- Role is temporary access
+
+- service to service access done by Roles
+
+=========================================================================
+
+************** IAM ROLE Practical (Trusting) **************
+
+1) Tusting your own 12 digit Account :- 992382587748
+
+2) Ask Other Account Trusted Account :- 756074853777
+
+3) Create Role Name :- POC Trusted A/C.:- 756074853777
+
+4) Attached policy ec2 & s3 readonly to role
+
+5) arn:aws:iam::992382587748:role/POC
+
+************** IAM ROLE Practical (Trusted) **************
+
+1) User :- Admin
+
+2) Group :- poc_users
+
+3) Create a policy change_role ........Select a service -> STS.......In Write : AssumeRole.......arn:aws:iam::992382587748:role/POC
+(STS - secure token service)
+
+4) Attached policy to poc_users group
+
+5) login via your company dashboard url (https://756074853777.signin.aws.amazon.com/console)
+
+6) security credential switch role (A/C : 992382587748 and Role name : POC)
+
+=======================================================================
+
+>> Permission Boundry
+- Maximum permission user
+
+>> AWS CLI
+
+****** AWS Organization ******
+
+>> Black Listing & White Listing
+
+- Full Access and One By One blocking means Black Listing
+
+- Deny All(Block All) and allow one by one means white listig
+
+** Implicit Deny (white listing)
+
+>> SCP (service control policy)
+
+- First permission Full Access To All
+
+1) Full Access All
+2) ec2 full access block -  root (ap-south-1)
+
+=======================================================================
+
+>> Practical Documentation - AWS Organization
+
+----------------------- SOP for Organization (Inviter) ---------------
+
+1) invitor (myself) 12 igit account number : 992382587748
+
+2) invitee (friend) 12 digit account number : 756074853777 or invitee email 
+
+3) create an aws organization  ....  will automaticaly turn into master account
+
+4) send invitation to accepoter (invitee) with email id or 12 digit account number
+
+5) create ou to match the hierachy of yr company and move account respectively
+
+6) Create SCP to block root access to ec2 in specific region ... attach scp to ou
+
+-------------------- Invitee --------------
+
+1) go to organization and accept the request ... later i wish i can leave the organization
+
+2) check deny access for ec2 in mumbai region (e.g) ...... success 

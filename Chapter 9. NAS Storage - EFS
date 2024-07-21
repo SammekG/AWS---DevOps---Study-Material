@@ -1,0 +1,22 @@
+********************* NAS Storage - EFS *********************
+
+- Moderate read / write / file sharing 
+- Readymade file system
+- FTP / NFS / CIFS(SAMBA)
+
+- AWS not support FTP - it's not secure
+
+- Linux - Unix - Linux --> NFS
+- Windows - Linux - Windows --> CIFS
+
+- 8EB
+
+- Regional service - work on VPC
+
+- cnnection 10000 access
+
+#!/bin/bash
+yum install -y httpd
+yum install -y amazon-efs-utils.noarch
+sudo mount -t efs -o tls fs-0fcb778e982a66b61:/ /var/www/html
+systemctl enable --now httpd

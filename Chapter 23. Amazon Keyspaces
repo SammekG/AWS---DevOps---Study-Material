@@ -1,0 +1,24 @@
+*********** Amazon Keyspaces ***********
+
+--> What is Amazon Keyspaces?
+- scalable, highly available, serverless and managed Apache Cassandra–compatible database service
+- compatable with Apache Cassandra database
+- migrate, run and scale Cassandra workload in aws using tool CQL
+
+--> Keyspaces offers Two throughput capacity modes
+- on demand mode
+- provisioned capacity mode
+
+--> Benefites
+- Compatibility with Apache cassandra and CQL
+- Serverless
+- Dual Mode - OnDemand and Provisioned
+
+--> Use cases
+- Enable migrating cassendra database to AWS
+- Developing apps using open source technologies
+- build application that requires low latency response
+
+--> Lab Notes
+- Python 3 does not work very well with cassandra 40x and 311
+- cqlsh	6.0.0 does not work well with amazon keyspaces to copy data from csv

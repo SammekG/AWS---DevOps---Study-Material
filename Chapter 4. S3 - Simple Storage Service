@@ -1,0 +1,420 @@
+************ S3 - Simle Storage Service *********
+
+--- DC Storage --- (2 Teams : IT operation and IT Development)
+1) DAS - directly attched storage
+2) SAN - storage area network
+3) NAS - Network attached storage
+
+--- Cloud Store ---
+4) Object Store - S3
+
+1) DAS - Directly attched storage
+
+- Inernal/external HD,CD,DVD,USB
+- one to one connectivity - mapping 
+- Limited no. of devices due to less port
+- Device first detect in OS
+- once detect create partition / volume
+- filesystem - FAT/NTFS/ext4/xfs
+- drive letter - mount point
+- Main Advantage is v.v.v. fast for accessing / IO speed / cheap
+- No default backup (spof - single point of failure)
+--- SCSI Protocol (small computer system interface)
+--- Installation (DAS device)
+- installation always happen on DAS device
+
+-- In AWS call > Ephemeral device / instance store (temporory storage)
+
+
+2) SAN - storage area network
+
+- SAN Storage is a H/W appliance
+- many to many connectivity / mapping
+- multiple HD - coming from N/W - no limitaion of port
+- Raid (redundant array of inexpensive disks) 
+- Device need to e detected to OS
+- partition / volumes
+- filesystem
+- mount / drive system
+- Access
+-- FC-SCSI (fiber channel SCSI) VVVVVVV Fast good I/O
+-- I-SCSI (Internet SCSI)
+-- Installation on SAN Storage
+
+-- In AWS call > EBS - Elastic Block Store (Taking on rent so it's not expensive in AWS)
+
+-- VVV Expensive
+
+-- Default storage in AWS is SAN Storage called EBS
+
+-- San storage work on FC switch network
+
+
+3) NAS - Network attached storage
+
+- File sharing****
+- Readymade file system sharing (File sharing)
+- FTP / NFS / CIFS (common internet file system) - SMB(server message block) - SAMBA
+- Map MyDrive / mount and access
+- Moderate level Read and Write we use NAS (sharing)
+- not installing
+
+-- In AWS Call > EFS - Elastic File System (NFS Protocal)
+
+
+4) Object Store / Cloud Store (S3)
+
+- e.g: Google Drive
+- https:// - RestAPI - protocall use
+- Chepest storage
+- Globally Accessable
+- Secure
+- Durability 99.999999999 (related to file loss)
+- No Backup required
+- Unlimited storage (5TB size per file/object)
+- No Capacity planing
+- No servers to manage
+- No security patching
+- Cross region replication
+- Versioning
+- No installation
+- WORM (write once read many times)
+- good for logs / music / media / videos
+- e.g.: Netflix, Hotstar, Amazon prime
+
+-- Manage storage by AWS - S3
+
+-- access time for first access takes 9Ms
+
+-- Global service S3
+
+Diff between SAN and NAS?
+SAN is a block device access > detect -> partition -> file system -> mount -> access (EBS)
+NAS is a file system access > mount -> access (EFS)
+
+---------- Implementation and architecture of S3 : ---------- 
+
+- Globally accessible drive
+- In free-tier 100 bucket and objects are unlimited
+- DNS complian (bucket name is globally unique)
+- globally accesible store inside a region
+- bucket is a regional service
+
+-> Advantages
+1) Bucket - Objects - Keyname - DNS Compliance
+2) Unlimited Objects - One object size cannot be larger than 5 TB
+3) Bucket Size Unlimited
+4) AWS Backup
+5) AWS Security
+6) 11-9s Durability
+7) First Byte - less than 9Ms
+-> Disadvantages
+8) No Installation
+9) WORM - Write once Read Many Times
+
+** S3 every Read operaion is Download the file
+** S3 every Write operation is Upload the file
+** S3 is a global service stored in Region
+
+-- F5 - best hardware load balancer
+-- Meta data nodes - indexing
+-- Eventually consistant
+
+how S3 handle traffic ? 
+>> region > load balance(h/w LB - F5) > meta data nodes (Indexing) > AZ (storage nodes)
+
+-- Cross region replication (paid facility) - DR functionality - we have to set this
+
+>> Pre-signed URL
+- share with pre-signed URL
+
+>> Tags :
+- Grouping and filtering
+
+>> AWS Tier (S3 Storage Class)
+- S3 Standard Storage - Default storage (continue access)
+Frequently accessed data (more than once a month) with milliseconds access	
+
+- Standard-IA - Infrequent Access - S3 IA (accessing in months)
+Infrequently accessed data (once a month) with milliseconds access	
+
+- One Zone-IA - Infrequent Access One Zone (once a month) (Usualy used for DR)
+Recreatable, infrequently accessed data (once a month) stored in a single Availability Zone with milliseconds access
+
+- Intelligent-Tiering 
+Data with changing or unknown access patterns	
+
+- Glacier Instant Retrieval	- S3 Glacier Instatnt Access
+Long-lived archive data accessed once a quarter with instant retrieval in milliseconds	
+
+- Glacier Flexible Retrieval (formerly Glacier)	- S3 Glacier Flexible Access (min to hr)
+Long-lived archive data accessed once a year with retrieval of minutes to hours	
+
+- Glacier Deep Archive	- S3 Glacier Deep Archive
+Long-lived archive data accessed less than once a year with retrieval of hours	
+
+- Reduced redundancy	
+Noncritical, frequently accessed data with milliseconds access (not recommended as S3 Standard is more cost effective)	
+
+>> Tier based storage (storage works in tire)
+- Hot > SSD
+- Worm > SCSI / SATA
+- Cold > Magnetic Disk / Tape Drive
+
+** How would you protect data in AWS?
+- Data is already protected by 99.999999999 > 11-9s
+- Versioning (it will solve Accidental delition and overwritting)
+- Cross Region Replication (In bucket Go to management and add Replication Rule)
+- Object Lock (Object Lock legal hold) (Versioning Must)
+  > Retention - how many days - 100 years max
+    - Governance
+	- Compliance
+  > Legal Hold - stay - till then this stay not removed
+
+======================================================
+
+There are two types of storage in Cloud-
+1. object store -- all types of files can be stored- txt, binary, audio, video, image, .exe, backup etc.. 
+All these files are avialble over the Internet -- 
+to relate ..it is like the Google Drive -- No OS expansion, No App installation
+
+2. block store -- all types of files can be stored- txt, binary, audio, video, image, .exe, backup etc.. 
+All these files are not available over the Internet -- 
+just like the DISK in your VM -- EBS ( elastic Block service) -- will OS expansion, will App installation
+
+S3 - Simple storage service -- 2006
+-----------
+
+S3 is a global serice. 
+
+is an "object store" in AWS
+
+objects -- are files only but here we shall call then Object
+ 
+Buckets are containers for data stored in S3. 
+
+Bucket name must be unique and must not contain spaces or uppercase letters.
+
+Bucket name must be globally DNS compliance.
+
+arn:aws:s3:::ethansjulyweb
+arn:aws:s3:::ethansjulyweb/index.html
+arn:aws:iam::aws:policy/IAMReadOnlyAccess
+
+https://
+ethansjuly22.
+s3.
+ap-south-1.
+amazonaws.com/
+1.txt
+
+arn:aws:s3:::ethans785
+arn:aws:s3:::ethans785/12062021.txt
+
+Req- How to make an object Public?
+Solution- Objects can be made public only when the bucket is Public. 
+Make you Bucket public and then make the Object Public.
+
+Bucket Versioning 
+-------------
+What?
+Why?
+
+GIT
+
+Rollback
+
+file1.txt			base_version
+file1.txt			version_one
+
+Can my computer perform versioning?
+No
+
+100mb
+101mb
+105mb
+110mb
+===========
+416 mb
+
+Static website hosting
+---------------------
+
+Dynamic Website - amazon.in, net banking, MMT
+Static website - wikipedia, TOI, blogging website
+
+server site scripting
+
+http://aws-ethnas-tutorial.s3-website.ap-south-1.amazonaws.com/index.html   --ROUTE 53-> www.mywenb.com
+
+Storage Class in S3
+--------------------------
+1. standard -- at least 3 AZs 99.999999999 % ---no data lost -- frequently access / quick response - costliest 1/rs
+6. Intelligent tiering -- it check the access patter of your file using AWS's own AI algo.
+ cost saving compared to other storage class.--------------------------90/ps/
+2. standard Infrequent access -- at least 3 AZs 99.999999999 % --Infrequent / quick response - costliest 1/rs 80/ps
+3. One Zone- IA ---99.99 -- --Infrequent / quick response - costliest 1/rs 60/ps
+4. Glacier -- back up - 40ps
+5. Deep Glacier - low cost -10ps
+
+Q- can a bucket have multiple objects in different storage class?
+Ans- Yes
+
+durability -- related to file loss (11 9s)
+availability -- when you demanded the file, at that time how quickly you got access
+
+Req- I am into a Credit Card division of HDFC bank. CC statements get 
+generated 4 times/cycles in a month 
+(4th, 13th,21st,29th). Let the Statement be in "Frequently accessed" class for 
+1st 3 months. 
+After that, move statements into "in Frequently accessed" class. 
+After 1 year, move it into archive.
+ After 5 years, then delete it.
+
+Ans- Lifecycle Management Rule
+
+Lifecycle Management Rule
+--------------------
+Use lifecycle rules to define actions you want Amazon S3 to take during an object's lifetime 
+such as transitioning objects to another storage class, archiving them, or deleting them after a 
+specified period of time.
+
+Q- can a single bucket has multiple Lifecycle rules?
+A- yes you can
+
+Req- I have a source bucket (in mumbai region). If I upload a new file in my source bucket, 
+then it should be uploaded in my target bucket (in singapore region).
+
+Solution- Object Replication
+
+Object Replication two types
+----------
+1. CRR (cross region replication) -- source and target buckets will be in diff regions
+2. SRR (same region replication) -- source and target buckets will be in same region
+
+** both the source and target buckets must be versioned
+
+CRR will be costlier compared to SRR.
+
+** can be done in Your own AWS's account buckets or diff AWS's account bucket.
+
+** we need an IAM Role.
+
+
+Q- What are the factors/variables on which cost of S3 will depend?
+--------------------------------
+
+S3 Pricing
+-----
+1. Region-
+2. amount of data
+3. storage class
+4. access (no of reads/writes/modifications etc.) pattern
+5. data tarnsfer charges ( in same region very less, cross region high charges)
+6. etc
+
+
+Read/ write
+
+100 mb file- 1M times read
+100 mb file- 100 times read
+
+
+------CROSS account Bucket/Object share----
+
+Q- How to share Bucket with other AWS account & also with other AWS account IAM USER?
+
+ACL (Access Control List)
+--------------------
+
+can only grant basic read/write permission
+
+two types of permission strategy
+-----------------
+1. fine grained access control -- minute level of access can be conrolled- 
+list the files but not read the contents of the file
+2. coarse grained access control- basic read/write/execute -- ACL
+
+
+Q- How to share Bucket with other AWS account & also with other AWS account IAM USER. 
+But grant only LIST permission.
+
+Ans- ACL cant work here.
+
+arn:aws:s3:::julymumbai
+arn:aws:iam::331026266777:user/julyuser
+
+BUCKET POLICY will work here.
+-------------
+The bucket policy, written in JSON, 
+provides access to the objects stored in the bucket.
+
+IAM Policy will be attached to USER/Groups/Role.
+BUCKET POLICY will be created on an individual bucket.
+
+
+HTTP Methods		Original activity
+--------------		------------------
+POST				Create
+GET					Read
+PUT					Update/Replace
+PATCH				Update/Modify
+DELETE				Delete
+
+
+Q- can we change the name of bucket?
+Ans- NO
+
+Q- How many buckets can be there in an account?
+Ans- no limit
+
+Q- How many objects can be there in a buckets in an account?
+Ans- no limit
+
+Q- What can be the maximum size of a bucket?
+Ans- no limit
+
+Q- What is the maximum size of an individual object in a bucket?
+Ans- max size is 5 TB
+
+Individual Amazon S3 objects can range in size from a minimum of 0 bytes 
+to a maximum of 5 terabytes.
+
+Q- if i have a object of 5 TB, 
+can I upload it, the way we have been uploading the object till now?
+
+Ans- Not possible
+
+Q- limit on the size of object which can be uploaded in single PUT operation?
+Ans- 5 GB
+
+AWS Recommendation- any object bigger than 100mb 
+should be uploaded using MULTIPART UPLOAD
+
+MULTIPART UPLOAD
+----------------
+Multipart upload allows you to upload a single object as a set of parts. 
+Each part is a contiguous portion of the object's data. 
+You can upload these object parts independently and in any order. 
+If transmission of any part fails, you can retransmit that part without 
+affecting other parts. 
+After all parts of your object are uploaded, 
+Amazon S3 assembles these parts and creates the object. 
+In general, when your object size reaches 100 MB, 
+you should consider using multipart uploads instead of uploading the 
+object in a single operation.
+
+
+Req- There is a matrimony portal, having a dataset (image/video/audio/profiles/location) 
+of 200 TB. 
+All data in on-prem setup. Now they want to move into AWS- S3.
+
+Solution- upload over Internet is not feasible option.
+
+AWS SNowball
+
+Hello  ---  Encryption -->  wqerty3456       --- Decryption --> Hello
+
+Plain Text					Cipher Text
+
+AWS Snowmobile

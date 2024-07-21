@@ -1,0 +1,577 @@
+********************* VPC *********************
+
+VPC is a regional service 
+
+>> 5 Components :
+1) IP
+2) Subnet
+3) Hostname
+4) DNS
+5) Router
+
+>> Ip Address
+> ipv4 
+- 32 bit
+- 4 billion ip addresses
+- class less and class full 
+
+> ipv6 (Hecxadecimal number)
+- Exosted
+- 128 bit 
+- Trillian Trillian Trillian (infinity)
+- Auto configure
+
+** IEEE
+
+255 > network lenth
+0 > Host
+
+192.168.0.0 (each octet number is 8 bit)
+
+------------------------------------------------
+
+>> Class full IP 
+ip address decided into classes
+
+- Class A : 1 to 126 > Subnect / Netmask - 255.0.0.0 > Formula - 255*255*255 (-2 DC) (-5 AWS) > 16581375 -2 > 16581373 ip
+10.0.0.0 > from this 10 is a network ID and 0.0.0 is a host id wich is variable 0 to 255
+Too many host an very few networks
+ISP and cloude mostly used
+AWS Azure GCP Jio
+
+(127 Reserver - loop back (Self testing)) localhost 
+
+- Class B : 128 to 191 >  Subnect / Netmask - 255.255.0.0
+172.16.0.0 from this 172.16 ia a network id an 0.0 is a host id 
+Formula - 255*255 (-2 DC) (-5 AWS) 
+Mid Size company
+TCS Wipro
+good number of host
+good number of network
+
+- Class C : 192 to 233 >  Subnect / Netmask - 255.255.255.0
+192.168.0.0 for this 192.168.0 is a net id and 0 is a host id
+192.168.1.255 not allowed because 192.168.0 are ntwork id
+small companies
+Formula 256 (-2 DC) (-5 AWS)
+
+- Class D and E used by government
+
+Network id is always constatnt
+> 10.0.0.0
+> 255.0.0.0
+
+In this Net ID is 10 
+And
+10.0.0.0 from this 0.0.0 is a host id (variable)
+
+All 0 in host id not allowed (it should be network address)
+And 
+All 255 in host id not allowed (It comes under broadcast address)
+
+
+AWS not allowe 5 ip adress
+1) 0 for Network
+1) 1 for Router adress
+2) 2 for NS HCP
+3) 3 for Reserve for future
+4) 255 for broadcast
+
+so ip start from 4 (10.0.0.4)
+
+IANA and ISOC control the ip's
+
+**same network adress easily communicate
+**Diff network communicate with router
+
+- 192.168.0.14 from this network address is 192.168.0.0
+- 192.168.1.15 from this network address is 192.168.1.0
+
+from these two diff block 192.168.0.0 > 192.168.1.0 we need router to communicate
+
+packet forwarding in router which help to commpunicate from one net to another
+
+-----------------------------------------------
+
+>>  CLASS LESS - CIDR - Subneting - Superneting - Variable Length Subnet Mask(VSLM)
+
+break the rules become class less
+
+Cloud work in class less
+
+192.168.0.0  >>  Class full notation
+
+192.168.0.0/24 >> CIDR notation
+
+
+192.168.0.0/24
+255.255.255.0
+
+
+Wikipedia CIDR Calculator or https://cidr.xyz/
+192.168.0.0
+
+2 n/w and 120+ host
+
+CIDR accepted in AWS :
+AWS allow CIDR /16 to /28
+
+CIDR accepted in Azure :
+/16 to /29
+
+CIDR accepted in GCP :
+
+** In Private IP we can use CIDR notation
+** In Public IP we can not use CIDR notation
+
+>> Private IP vs Public IP
+
+> Private IP :
+- private ip is free home/dc/cloud
+- not allowed in internet
+- non routable
+- 192.168.0.0 - class C free
+- 10.0.0.0 - class A free
+- 172.16.0.0 to 172.31.0.0 - class B free
+
+10.0.0.0 to 10.255.255.255 ( any IP starting from 10 is a pvt IP )
+172.16.0.0 to 172.31.255.255 ( 172.16-31.0-255.0-255,any IP starting from 172, whose 2nd octet is between 16 and 31 are pvt IP)
+192.168.0.0 to 192.168.255.255 ( any Ip starting from 192, whose 2nd octet is 168, is a pvt ip)
+
+> Public IP :
+- Paid (Lease)
+- Home/DC/cloude/internet ------- Anywhere
+- All Except private ip is a public IP
+- Over the internet am accessing 2 system then mandatory having public ip on both side
+
+--------------------------------------------------
+
+>> NAT
+-SNAT - Source network address translation - Internet sharing
+-DNAT - Destination network address translation - hosting servers - static ip
+-PAT - Port Address Translation
+
+***Static Public Ip > Elastic IP
+
+***EC2 use DNAT
+
+--------------------------------------------------
+
+>> VPC - Isolation
+
+> CLASS A
+Regional VPC - CIDR 
+Large CIDR : 10.0.0.0/16 (Act as router)
+
+Subnet 1 - AZ - 1a (Public subnet) - internet access (Act as switch) - e.g.: webserver
+Small CIDR : 10.0.1.0/24 - 256-5 -> 251 (e.g.: instance ip : 10.0.1.4 - 10.0.1.5 etc till 251)
+
+Subnet 2 - AZ -1b (private subnet) - no internet access Act as switch) - e.g.: database
+Small CIDR : 10.0.2.0/24 - 256-5 -> 251 (e.g.: instance ip : 10.0.2.4 - 10.0.2.5 etc till 251)
+
+Subnet 3 - AZ - 1c Act as switch)
+Small CIDR : 10.0.3.0/24 - 256-5 -> 251 (e.g.: instance ip : 10.0.3.4 - 10.0.3.5 etc till 251)
+
+> CLASS B
+Large CIDR : 172.16.0.0/16 (Act as router)
+
+Subnet 1 - AZ - 1a (Public subnet) - internet access (Act as switch) - e.g.: webserver
+Small CIDR : 172.16.1.0/24 - 256-5 -> 251 (e.g.: instance ip : 172.16.1.4 - 172.16.1.5 etc till 251)
+
+Subnet 2 - AZ - 1b (Public subnet) - internet access (Act as switch) - e.g.: webserver
+Small CIDR : 172.16.2.0/24 - 256-5 -> 251 (e.g.: instance ip : 172.16.2.4 - 172.16.2.5 etc till 251)
+
+Subnet 3 - AZ - 1c (Public subnet) - internet access (Act as switch) - e.g.: webserver
+Small CIDR : 172.16.3.0/24 - 256-5 -> 251 (e.g.: instance ip : 172.16.3.4 - 172.16.3.5 etc till 251)
+
+***In VPC CIDR should not be overlap (because if we want to combine/connect 2 VPC then it will be overlap because same ip)
+
+AWS Infra
+- Region
+- AZ
+- Edge Location
+
+Protocal which Networks : 
+
+1) VLAN > isolation > subneting > 4096 Max user
+
+2) VXLAN > No limit
+
+3) GRE > 
+
+***main purpose of creating VPC is isolaton network
+
+In AWS VXLAN and GRE (Netowrk tunneling protcall)
+
+VPC Advantage : 
+
+1) Isolation (VXLAN / GRE):
+2) Full Control on Private IP
+3) Full Conterol on Network Design
+
+
+**** VPC Regional Service ****
+1) Region
+2) large CIDR (Private IP) - No Overlap of CIDR / onpremise network
+3) Name of VPC
+
+****** Design VPC ******
+
+>> e.g. : HDFC Bank
+
+1) Default VPC Router - locally traffic handle
+2) NACL - automatically get created - protect entire VPC
+3) IGW - Bi_directional internet access (In and out) - HA / HS 
+4) IGW attached To my VPC (HDFC_bank) - 1 to 1 mapping
+5) Public and Private Subnet - subnet is a AZ service - create in diff AZ's
+   - Small CIDR - Pri Sub (10.0.1.0/24) Pub Sub (10.0.2.0/24)
+   - In Public Subnet - Enalble auto assign public ip and enable DNS
+6) create Public Route Table
+   - 0.0.0.0/0 > any traffic coming then connect to IGW
+7) Subnet Association to public subnet
+8) if we want web server then instance get create in Public Subnet
+9) Create ec2 - http web - we need to create SG (ssh - 22 and  httpd web server - 80)
+   - using jump box (bastine host) we directly connect to private subnet server
+10) if we want to create DB then create it in private subnet (because we dont want to access it publicaly)
+11) ec2 - DB - server - we need to create SG (ssh - 22 and  SQL - 3306)
+12) NAT gateway - one-directional (paid)
+    - Create in public subnet and associate with private subnet
+	- Always need elastic ip
+13) Private RT - 0.0.0.0/0 connect to priv RT and associate with priv subnet
+
+>> Public subnet is connected to IGW
+>> private subnet is not connected to IGW
+
+DDI > DNS, DHCP, and IP address management
+> work on subnet level
+- DHCP 
+- DNS 
+- ip address
+
+*******************************************************
+Linux instance Public To Private connection
+
+- cretae key file in public instance
+- give permission 400
+- ssh ec2-user@192.168.2.85 -i privatekey.pem
+*******************************************************
+
+SSH pagent
+
+Session transfer / forwarding
+- download pagent
+- add ppk key in pagent
+- launch putty > ssh > auth >  allow agent forwarding
+
+if connection is not happening : 
+- steps to check
+1) SG
+2) Blackhole
+
+*******************************************************
+
+VPC Peering :
+non tranistive paeering (if A - B -C but it's not mean a -c )
+Main importance is private ip access
+golden solution of connecting two servers
+
+can we access vpc without having igw?
+Yes, with the help of vpn
+
+when tp use vpc-peering and vpn?
+
+VPC Transit gateway:
+- transistive gateway
+- hub and spoke architecture
+
+pcx > vertual connection
+
+--------------------
+1) requester
+2) acceptor
+
+(vpn) - (pcx)
+
+3) All route table - criss/cross connection
+--------------------
+
+***** VPC Reachability Analyzer
+
+icici_pub
+54.161.130.149
+Administrator
+8g8vHIpWXg5;hbrZyF$vlqXry6tC@sxr
+
+icici_priv
+192.168.2.8
+Administrator
+eg@%j=)Ctw@6@Mwfs@HZl;l=sL=j!&=h
+
+sbi_pub
+54.85.188.33
+Administrator
+;?l)MGQ$czAXWplpvgAP%an=(-8?QzKO
+
+sbi_priv
+10.0.2.23
+Administrator
+vBRtri.VJLfBye8*hd3tlXGQDK?yidbu
+
+VPC ID : vpc-004ef3b8415c09869   (Requester)
+
+VPC ID : vpc-06fd014669e10ec8c	 (Accepter)
+
+*******************************************************
+
+VPC --> VPN  ---> Client to site
+
+--> Security
+	ssl vpn
+	IPSec vpn
+	
+--> Pritave ip access
+
+1) C2S --> Client to site 
+-->> home to server
+-->> encription - ssl vpn
+-->> Open VPN server on site side
+-->> Open VPN Client software on home/laptop
+
+--------------------------------------------------------------------------
+You can now continue configuring OpenVPN Access Server by
+directing your Web browser to this URL:
+
+https://44.203.181.99:943/admin
+
+During normal operation, OpenVPN AS can be accessed via these URLs:
+Admin  UI: https://44.203.181.99:943/admin
+Client UI: https://44.203.181.99:943/
+To login please use the "openvpn" account with "okeuFtDPwA7Z" password.
+
+See the Release Notes for this release at:
+   https://openvpn.net/vpn-server-resources/release-notes/
+--------------------------------------------------------------------------   
+
+2) S2S --> Site to site 
+-->> DC to DC
+-->> encription - 	IPSec vpn
+-->> AWS 10.0.0.0/16
+	- AWS -side / right-side / remote-side
+	- Need to create CGW (customer gateway) - info about customer router - site to site vpn
+	- Create VPG (virtual private gateway) - info about aws router
+	- attached vpg to vpc
+	- inbetween cgw and vpg  create s-2-s (customer and aws Router matchup)
+	- in default RT enable feature "Route Propogation"
+	- router configuration commands download document
+	
+-->> DC
+	- DC router to communicate with aws
+	- customer-side / left-side / local-network
+	- DC - CCNA
+	- public ip of router
+	- CIDR
+	- Make & Model of router
+	- aws downloaded router command run in DC RT - config it and restart it
+	
+-->> Azure / PDC / GCP 192.168.0.0/16
+	- need router 
+	- ec2 machine linux - open swan
+	- elastic ip
+	- entery in all RT 10.0.0.0/16 travel trafic through open swan
+
+****Open Swan (linux open router)
+
+3) C2C --> Cloud to Cloud
+-->> Cloud to Cloud
+-->> encription - 	IPSec vpn
+
+*** Direct connect(lease line)
+-->> solve internet speed and conggestion problem
+-->> bydefault it's not secured
+-->> to secure lease line we need to use VPN over lease line
+
+SG -->> White Listing
+NACL -->> Black Listing
+
+>>>> Customer Site VPC :- ap-south-1 (mumbai) 192.168.0.0/16 - local - left side
+1) Launch an ec2 of amazon linux 2 AMI in public subnet
+2) SG : SSH ICMP all should be allowd for all
+3) attached elastic ip : 15.207.130.236
+4) Install open swan software / package
+	- #yum install -y openswan
+5) Disable source and destination check on open swan instance (package forearding)
+	- instance - action - network - Change Source / destination check - stop
+6) now work on aws site which is called as righ-side / remote-side network
+7) used the downloded config to setup your openswan
+8) login to openswan as root user and perform required config
+	- after IPSEC Tunnel #1 run below command
+		#chkconfig ipsec on
+		#systemctl start ipsec
+	- please verify oneof your tunnel is up on s-2-s vpn
+9) Make entries in all route table to carry trafic for AWS site from openswan
+	- 10.0.0.0/16 > instance - openswan instance
+
+>>>> AWS Site VPC :- us-east-1 (Nort Virginia) 10.0.0.0/16 - remote - right side
+1) Create CGW (customer gateway) using above info from customer router & CIDR
+2) CGW will contain elastic ip of open swan craeted in the above step : 15.207.130.236
+3) Create VPG(virtual private gateway) AWS site router info
+4) attached VPG to VPC
+5) create s-2-s between CGW and VPG **Be very careful with left side and right side CIDR
+6) Enable route propogation in all RT 
+7) Download router configuration using make and model -> our is open swan
+8) Now go back to customer side and resume your work on step number 7
+
+------------------------------------------------------------------------------
+
+********************* SECURITY *********************
+
+>>>> Network Security
+
+- network communication on packets
+
+>> Firewall
+
+1) firewall in linux :
+	- iptable
+	- firewalld
+	
+2) firewall in WIndows 
+	- windows firewall
+	- defender
+
+>> Need to understand below concepts : (Firewall : Allow / Deny)
+
+1) Ports (Well known Port No)
+
+- port no is nothing but local address of a service on a perticular computer 
+
+	-> Hardware ports
+		e.g.: VGA, HDMI, USB, RJ45, IRDA etc.
+	
+	-> Software Ports
+		e.g.: Port No. : 80, 443, 3389(RDP) etc.
+		
+- sshd : 22
+- http : 80
+- https : 443
+- ftp : 21
+- DNS : 53
+- DHCP : 67
+- SMTP : 25
+- telnet : 23
+- RDP - 3389
+ 
+>> Well Known port numbers :
+- fall between 0-1024
+
+	> Linux : /etc/services
+	> Windows : c:/windows/system32/drivers/etc/services
+
+2) Protocall
+	- to block perticular services such as : sshd, hhtp, https, ftp, etc.
+	- if we dont want to run a perticuler service then we use protocall block.
+	- server hardning (blocking ports and protocall)
+
+3) Socket / Session
+	- nothing but ip address + port no.
+	- remote address of a perticular service
+	- e.g.: 192.168.0.1:22 (this will get block)
+	
+4) Endpoint
+	- nothing but ip + port no. + service version / software version
+	- Services : ec2, vpc, s3, IAM, etc.
+	
+>> Dynamic Port Numbers : 
+
+- communication on random port number
+- Dynamic port numbers (above 1024)
+
+>> Commands : 
+
+#netstat -antlpu
+#netstat -ano
+#ifconfig
+#ss -a
+#nmap <ip>
+#ncat <ip> <port>
+#telnet
+#tracepath
+#traceroute
+#mtrr
+#ping
+
+
+-- Operting System Firewall --
+
+-> linux
+	- iptable
+	- firewalld
+	
+-> Windows
+	- firewall
+	- defender
+	
+-> Ubuntu
+	-ufw
+
+>> Types of Firewall
+
+1) Hardware Firewall
+	- in between network
+	- centralized
+	- protect entire network
+	- very strong
+	- hardware appliance
+	- application/service in H/W firewall is called DMZ (web, email, ssh)
+
+2) Software Firewall
+	 - OS Level
+	 - e.g.: Database, File system
+
+
+>> VPC Firewall Flow
+
+Internet -> IGW -> VPC -> NACL -> Sub_pub, sub_pub, sub,_priv -> SG -> EC2 Instance (1..n)
+
+** AWS says not to use OS firewall use SG (security Group)
+** To handel DDOS attack use Pfsense
+** WAF(web application firewall) protecting DDOS
+** for perticuler keyword block use DDOS firewall that is WAF
+** pfsense work on IGW level
+** WAF is paid service
+
+>> 4 Firewalls : 
+1) OS level - OS firewall
+2) EC2 Level - SG (white listing | Allow | Statefull)
+3) Entire VPC - NACL (Black Listing | Allow and Deny | Stateless)
+4) BOT/ API Based Attach - DDOS(distributed deniel of service) (pfsense and In AWS called WAF(web application firewall))
+
+>> Diff between NACL and SG
+
+- NACL used for black listing
+- SG is used for white listing
+
+- NACL Allow and Deny
+- SG Allow and Allow Only
+
+- works/protect on VPC - N/W - Subnet
+- works/protect Instance
+
+- Stateless Firewall
+- Statefull Firewall
+
+- Inbound and Outbound rule
+- Which trafic IN same trafic goes OUT and Which trafic Goes OUT same trafic comes IN
+
+>> Default NACL and SG 
+-> In NACL Inbount and Outbound both Allow
+-> In SG Inbount and Outbound both Allow
+
+** for security reason better to not use Default NACL and SG
+** Better to edit or create new NACL and SG
+
+** Which traffic goes out from SG it will definetly IN (if port is not specifies in inbound rule)
+
+** OS level firewall used for server hardning
+
+** smallest rule having highest priority

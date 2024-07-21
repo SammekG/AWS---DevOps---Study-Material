@@ -1,0 +1,16 @@
+********************* Auto Scaling *********************
+
+** stree management not handle by LB handle only traffic management
+
+** LB not handle Healing
+
+Stress management and healing handle by Auto scaling
+
+Increase the traffic whenever required and decrese the traffic whenever required
+
+traffic from one vpc to another vpc we can use DNS LB
+
+1) Launch configuration(copy) / Launch Templet(edit)
+2) ASG
+3) Scaling policy
+4) Load Balancer

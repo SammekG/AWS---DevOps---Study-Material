@@ -1,0 +1,52 @@
+********************* Load Balancer *********************
+
+- provide redundancy (SPOF - single point of failure)
+	- extra copy to handle failure
+	
+>> 3 DC Cluster
+1) HPC - High performance cluster (Rock solid - ccluster software)
+	- in aws called as "Placement Group"
+	- we design this because of short of CPU and RAM
+
+2) HA - High Availablity Cluster
+	- fail over cluster 
+	- havily used in Banking
+	- VCS / Redhat cluster
+	- in aws HA givem by AZ
+	- STONIH (shoot the other node in head)
+	- Split brain senario
+
+3) LB - Load Balancer Cluster
+	- all nodes in active state
+	- F5 cluster
+	- Baracuda Cluster
+	- In AWS ELB
+	
+
+>>>> ELB Types
+1) CLB - classic 
+	- round robin - Health Check
+	- works on aws instance
+2) ALB - application 
+	- only work on http / https 
+	- routing policy(RR / path based / keyword based)
+	- support instance / containers / IP  
+3) NLB - network 
+	- work on any port numbers
+	- high throughput lb
+	- Volatile traffic
+	- transport layer
+4) GLB - gateway 
+	- third party virtual appliance load balancer 
+	- e.g.: F5 or Baracoda LB
+
+**** DNS load balancer vs VPC load balancer
+
+>> OS Model
+1) Appication
+2) Presentation
+3) Session
+4) Transport
+5) N/W
+6) Data Link
+7) Physicalx

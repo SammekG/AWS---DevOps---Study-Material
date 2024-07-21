@@ -1,0 +1,851 @@
+********************* Contenerization - Docker *********************
+
+*********** Amazon Elastic Container Service (AWS ECS) *********
+
+-> What is ECS?
+- ECS is managed container orchestrator
+- share families : SWARP - Kuberneties - AWS ECS
+
+-> Why orchestrator?
+- Manage lifecycle of containers Create/resart/destroy
+- Deploy and load-balance application accross multiple servers
+- Autoscaling to handle variance in traffic
+- Rolling out chnages to application
+
+-> ECS Infrastructure and launch
+- Brain behind how the containers are deployed
+- works with only containers
+- only create and delete containers
+
+-> Cluster
+- underline resources of ECS instance can deploy your application
+
+1) EC2 Launch
+- we have to manage the underlying ec2 instances
+- we still need to manage the underlying infrastructure(ec2)
+- ECS manages the containers
+- Full control over your infrastructure
+
+2) ECS Fargate
+- AWS manages te underlying infrastructure
+- follows a serverless architecture
+- fargate will create servers on demand
+- no need to provision/maintain EC2 servers
+- you only pay for what you use
+
+-> ECS task
+- basicaly it's same a dockerfile
+
+-> ECS Services
+- A service ensures that a certain number of tasks are running at all times
+
+************* Docker made container easy *************
+
+-> Why you need docker?
+- end to end application with various diffrent techologies like web server using node.js
+- and database such as mongoDB and messaging system like Redis, and an orchestration tool like Ansible
+- we had lot of issues developing this applications stack with all these diffrent components.
+- diff libraries, dependencies, OS, Hardware infrastructure.
+- checking compatablity of every services
+- Compatibility / Dependency
+- Long setup time
+- Different Dev/Test/Prod environments
+
+-> What can Docker do?
+- With docker i was able to run each components in a seperate container
+- with it's own depndencies and it's ow libraries all on the same VM and OS but with seperate environment or container
+- which has to be build docker configuration once and start usinf with imple docker run command.
+- Containerize Applications
+- run each service with it's own dependencies in seperate container
+
+-> What are containers?
+- completely isolated environment
+- they can hav their own processor or services, their own network interfaces, their own mounts, just like VM, except they all share the same OS kernal.
+- docker utilize LXC container.
+
+-> Containers vs VM
+- Container : H/W -> OS -> Docker -> Diff Containers run with lib and dependencies alone
+  VM: H/W -> Hypervisor - > Diff VM (each vm having it's own os)
+- Container utilization less running on same OS kernal
+  VM utilization is get more 
+- Continer utiliza less size in MB's
+  VM utilize more size in GB's
+- Container take less time to boot and it's very fast to start container
+  VM take time for booting
+  
+-> Public Docker registery - dockerhub
+- lots of cntainerized version of application readily available as of today
+- public docker repository called docker hub or docker store
+- os, database, other services and tools
+- install docker on host and simply bring any app using command : docer run ansible
+
+-> Docker Image :
+	- Package
+	- Template
+	- Plan
+	
+-> Dcoker file is to create an image.
+
+-> Docker Edition
+- community edition (free)
+- enterprise edition (certified paid)
+
+- process isolation
+- cntainer do OS split
+- contenerization give you compute environment and it run in sec
+- vvv fast
+- light weight
+- more application packing dencity
+
+- CRE (Docker) 
+	- container runtime engine
+	
+- container work on 3 major technologies
+1) nmespace - what you can see
+2) C Groups - how much you can use
+3) union file system - layer file system
+
+ECS - Docker
+EKS - Kuberneties
+
+1) Docker File
+--- Docker Build ---
+2) Docker Image
+3) Docker Hub / Docker Registery - in cloud ECR 
+--- Docker Run ---
+4) Docker Engine - CRE
+--- Docker run ---
+5) Container Created
+
+-> Docker Client
+-> Docker Server
+-> Docker Registery
+
+** Podman :- it's a tool / command that maage, modify, create, delete via podman
+** podman is a demonless service
+
+>>>> Install Docker
+
+https://www.linuxtechi.com/install-docker-ce-centos-8-rhel-8/
+
+# dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+# dnf list docker-ce
+
+# dnf install docker-ce --nobest -y --allowerasing
+
+# systemctl start docker
+# systemctl enable docker
+
+
+**Docker/Podman Container:-
+**Container:-it is a light weight application that used to deployed any kind of service
+(or)applications,it stored service informations like service name,filesystem,network resources
+information & data information.
+___________________________________________________________________________
+**Docker:-it is a tool (or) command that managed the container,we can create,delete,modify
+          manage via docker tool.
+___________________________________________________________________________
+**Podman:-it is a tool (or)command that managed container via podman is not required to
+          run podman daemon
+Note:-Podman is a daemon less service
+___________________________________________________________________________
+
+**To Check Docker image:-
+#docker images
+#docker image ls
+___________________________________________________________________________
+**How to pull docker image:-
+#docker pull centos
+_____________________________________________________________________
+
+***How to Create a container (or) machine:-
+#docker run -it  -d  --name   vm1   centos
+
+where,
+it=interact terminal
+d=detached mode
+vm1=container name
+centos=image name
+_________________________________________________________________
+**To check running container:-
+#docker ps
+__________________________________________________
+**To check running & existed both container:-
+#docker ps -a
+_____________________________________________________________________
+**How to stop docker:-
+#docker stop image name
+_________________________________________________
+**How to start docker:-
+#docker start image name
+__________________________________________________________________
+**How to restart docker:-
+#docker restart image name
+___________________________________________________________________
+** running container with sleep time
+#docker run centos sleep 200
+___________________________________________________________________
+** running container with bash - get login to that image with bash shell
+#docker run centos bash
+_______________________________________________________________
+** docker run with interactive mode - take input and run
+#docker run -i application/sample-app
+_____________________________________________________________
+** docker run with interactive terminal mode
+#docker run -it application/sample-app
+___________________________________________________________________
+***How to create container:-
+#docker run -it -d --name vm1 centos
+____________________________________________________________
+**How to login in container:-
+#docker exec -it vm1 bash
+____________________________________________________________
+**Port mapping:
+#dockr run -p 80:5000 application/sample-app
+____________________________________________________________________________
+**Directory Mapping
+#docker run -p 8080:8080 -v /root/my-jenkins-data:/var/jenkins_home -u root	jenkins
+____________________________________________________________
+***How to create container in publically:-
+#docker run -it -d --name vm1 -p 80:80 centos
+where,
+80:80=host port:node port
+____________________________________________________________
+**Volume mapping 
+#docker run -v host_path:container_path <name>
+#docker run -v /opt/dadadir:/var/lib/mysql mysql
+________________________________________________________
+**Additional details about specific container
+#docker inspect container_name
+________________________________________________________
+**Container Logs
+#docker logs container_name
+________________________________________________________
+**Docker history
+#docker history docker_image_name
+________________________________________________________
+**attach to a running container
+#docker attach container_id
+________________________________________________________
+***How to remove container:-
+#docker rm vm1
+________________________________________________________
+***How to stop container
+#docker stop vm1
+_______________________________________________________________
+**How to remove running container:-
+#docker rm vm1 -f
+_________________________________________________________________________
+***How to remove docker images:-
+#docker rmi centos
+(or)
+#docker rmi ubuntu
+__________________________________________________________________________
+
+-> Launch web server
+
+docker pull ubuntu
+
+docker images
+
+docker run -it -d --name public-vm -p 8003:80 ubuntu
+
+docker images
+
+docker ps -a
+
+docker exec -it public-vm bash
+
+cat /etc/os-release
+
+apt update
+
+apt install apache2
+
+make chnages in web page : /var/www/html/index.html
+
+service apache2 restart
+
+--------------------------
+-> launch database
+
+docker pull mysql
+
+docker images
+
+docker run -it -d --name db-vm1 -e MYSQL_ROOT_PASSWORD=123 mysql
+
+docker ps -a
+
+docker exec -it db-vm1 bash
+
+mysql -u root -p
+
+show databases;
+
+--------------------------
+
+-> Create our own docker image
+first pull image from docker hub
+then create container
+run container make chnage in it
+
+no we want to create our own iage from that image container
+
+# docker commit <container_name> <new_image_name>
+
+and run this docker imahe and check 
+
+--------------------------
+-> Docker File 
+
+- Application (lib and dependencies)
+- Docker file
+- Docker image
+- put in registry -> Docker hub / ECR / Docker regisstry (public / private)
+- Linux system - CRE - Docker CLI
+- Docker pull 
+- Docker container
+--------------------------
+
+-> How to Create my own image?
+1) OS - Ubuntu
+2) Update apt repo
+3) install dependencies using apt
+4) install python dependencies usinf pip
+5) Copy source code to /opt folder
+6) Run the web server using "flask" command
+
+--> Need to create Dockerfile
+-----------------------------------
+e.g.: 1 - sample
+
+FROM Ubuntu
+
+RUN apt-get update
+RUN apt-get install python
+
+RUN pip install flask
+RUN pip install flask-mysql
+
+COPY . /opt/source-code
+
+ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+----------------------------------- 
+e.g.: 2 - Dockerfile-mysql
+
+FROM debian:stretch-slim
+
+# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+RUN groupadd -r mysql && useradd -r -g mysql mysql
+
+RUN apt-get update && apt-get install -y --no-install-recommends gnupg dirmngr && rm -rf /var/lib/apt/lists/*
+
+# add gosu for easy step-down from root
+ENV GOSU_VERSION 1.7
+RUN set -x \
+        && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+        && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+        && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+        && export GNUPGHOME="$(mktemp -d)" \
+        && gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+        && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+        && gpgconf --kill all \
+		&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
+        && chmod +x /usr/local/bin/gosu \
+        && gosu nobody true \
+        && apt-get purge -y --auto-remove ca-certificates wget
+
+RUN mkdir /docker-entrypoint-initdb.d
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+# for MYSQL_RANDOM_ROOT_PASSWORD
+                pwgen \
+# for mysql_ssl_rsa_setup
+                openssl \
+# FATAL ERROR: please install the following Perl modules before executing /usr/local/mysql/scripts/mysql_install_db:
+# File::Basename
+# File::Copy
+# Sys::Hostname
+# Data::Dumper
+                perl \
+        && rm -rf /var/lib/apt/lists/*
+
+RUN set -ex; \
+# gpg: key 5072E1F5: public key "MySQL Release Engineering <mysql-build@oss.oracle.com>" imported
+        key='A4A9406876FCBD3C456770C88C718D3B5072E1F5'; \
+        export GNUPGHOME="$(mktemp -d)"; \
+        gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+        gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/mysql.gpg; \
+        gpgconf --kill all; \
+        rm -rf "$GNUPGHOME"; \
+        apt-key list > /dev/null
+
+ENV MYSQL_MAJOR 8.0
+ENV MYSQL_VERSION 8.0.17-1debian9
+
+RUN echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-${MYSQL_MAJOR}" > /etc/apt/sources.list.d/mysql.list
+
+# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't have an explicit way to disable the mysql_install_db codepath besides having a database already "configured" (ie, stuff in /var/lib/mysql/mysql)
+# also, we set debconf keys to make APT a little quieter
+RUN { \
+                echo mysql-community-server mysql-community-server/data-dir select ''; \
+                echo mysql-community-server mysql-community-server/root-pass password ''; \
+                echo mysql-community-server mysql-community-server/re-root-pass password ''; \
+                echo mysql-community-server mysql-community-server/remove-test-db select false; \
+        } | debconf-set-selections \
+        && apt-get update && apt-get install -y mysql-community-client="${MYSQL_VERSION}" mysql-community-server-core="${MYSQL_VERSION}" && rm -rf /var/lib/apt/lists/* \
+        && rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql /var/run/mysqld \
+        && chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
+# ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
+        && chmod 777 /var/run/mysqld
+
+VOLUME /var/lib/mysql
+# Config files
+COPY config/ /etc/mysql/
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+EXPOSE 3306 33060
+CMD ["mysqld"]
+----------------------------------- 
+e.g.: 3 - Dockerfile-python
+
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM buildpack-deps:buster
+
+# ensure local python is preferred over distribution python
+ENV PATH /usr/local/bin:$PATH
+
+# http://bugs.python.org/issue19846
+# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
+ENV LANG C.UTF-8
+
+# extra dependencies (over what buildpack-deps already includes)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+                tk-dev \
+                uuid-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
+ENV PYTHON_VERSION 3.8.0b3
+
+RUN set -ex \
+        \
+        && wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
+        && wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
+        && export GNUPGHOME="$(mktemp -d)" \
+        && gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEY" \
+        && gpg --batch --verify python.tar.xz.asc python.tar.xz \
+        && { command -v gpgconf > /dev/null && gpgconf --kill all || :; } \
+        && rm -rf "$GNUPGHOME" python.tar.xz.asc \
+        && mkdir -p /usr/src/python \
+        && tar -xJC /usr/src/python --strip-components=1 -f python.tar.xz \
+        && rm python.tar.xz \
+        \
+        && cd /usr/src/python \
+        && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+        && ./configure \
+                --build="$gnuArch" \
+                --enable-loadable-sqlite-extensions \
+                --enable-optimizations \
+                --enable-shared \
+                --with-system-expat \
+                --with-system-ffi \
+                --without-ensurepip \
+        && make -j "$(nproc)" \
+        && make install \
+        && ldconfig \
+        \
+        && find /usr/local -depth \
+                \( \
+                        \( -type d -a \( -name test -o -name tests \) \) \
+                        -o \
+                        \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+                \) -exec rm -rf '{}' + \
+        && rm -rf /usr/src/python \
+        \
+        && python3 --version
+
+# make some useful symlinks that are expected to exist
+RUN cd /usr/local/bin \
+        && ln -s idle3 idle \
+        && ln -s pydoc3 pydoc \
+        && ln -s python3 python \
+        && ln -s python3-config python-config
+
+# if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
+ENV PYTHON_PIP_VERSION 19.2.1
+# https://github.com/pypa/get-pip
+ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/404c9418e33c5031b1a9ab623168b3e8a2ed8c88/get-pip.py
+ENV PYTHON_GET_PIP_SHA256 56bb63d3cf54e7444351256f72a60f575f6d8c7f1faacffae33167afc8e7609d
+
+RUN set -ex; \
+        \
+        wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
+        echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum --check --strict -; \
+        \
+        python get-pip.py \
+                --disable-pip-version-check \
+                --no-cache-dir \
+                "pip==$PYTHON_PIP_VERSION" \
+        ; \
+        pip --version; \
+        \
+        find /usr/local -depth \
+                \( \
+                        \( -type d -a \( -name test -o -name tests \) \) \
+                        -o \
+                        \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+                \) -exec rm -rf '{}' +; \
+        rm -f get-pip.py
+
+CMD ["python3"]
+----------------------------------- 
+e.g.: 4 - Dockerfile-ubuntu
+
+#
+# Ubuntu Dockerfile
+#
+# https://github.com/dockerfile/ubuntu
+#
+
+# Pull base image.
+FROM ubuntu:14.04
+
+# Install.
+RUN \
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+  apt-get update && \
+  apt-get -y upgrade && \
+  apt-get install -y build-essential && \
+  apt-get install -y software-properties-common && \
+  apt-get install -y byobu curl git htop man unzip vim wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# Add files.
+ADD root/.bashrc /root/.bashrc
+ADD root/.gitconfig /root/.gitconfig
+ADD root/.scripts /root/.scripts
+
+# Set environment variables.
+ENV HOME /root
+
+# Define working directory.
+WORKDIR /root
+
+# Define default command.
+CMD ["bash"]
+----------------------------------- 
+e.g.: 5 - Dockerfile-wordpress
+
+FROM php:7.1-apache
+  
+# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
+RUN set -ex; \
+        \
+        savedAptMark="$(apt-mark showmanual)"; \
+        \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                libjpeg-dev \
+                libmagickwand-dev \
+                libpng-dev \
+        ; \
+        \
+        docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
+        docker-php-ext-install -j "$(nproc)" \
+                bcmath \
+                exif \
+                gd \
+                mysqli \
+                opcache \
+                zip \
+        ; \
+        pecl install imagick-3.4.4; \
+        docker-php-ext-enable imagick; \
+        \
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+        apt-mark auto '.*' > /dev/null; \
+        apt-mark manual $savedAptMark; \
+        ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
+                | awk '/=>/ { print $3 }' \
+                | sort -u \
+                | xargs -r dpkg-query -S \
+                | cut -d: -f1 \
+                | sort -u \
+                | xargs -rt apt-mark manual; \
+        \
+        apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+        rm -rf /var/lib/apt/lists/*
+
+# set recommended PHP.ini settings
+# see https://secure.php.net/manual/en/opcache.installation.php
+RUN { \
+                echo 'opcache.memory_consumption=128'; \
+                echo 'opcache.interned_strings_buffer=8'; \
+                echo 'opcache.max_accelerated_files=4000'; \
+                echo 'opcache.revalidate_freq=2'; \
+                echo 'opcache.fast_shutdown=1'; \
+        } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+# https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
+RUN { \
+# https://www.php.net/manual/en/errorfunc.constants.php
+# https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
+                echo 'error_reporting = E_ERROR | E_WARNING | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_RECOVERABLE_ERROR'; \
+                echo 'display_errors = Off'; \
+                echo 'display_startup_errors = Off'; \
+                echo 'log_errors = On'; \
+                echo 'error_log = /dev/stderr'; \
+                echo 'log_errors_max_len = 1024'; \
+                echo 'ignore_repeated_errors = On'; \
+                echo 'ignore_repeated_source = Off'; \
+                echo 'html_errors = Off'; \
+        } > /usr/local/etc/php/conf.d/error-logging.ini
+
+RUN a2enmod rewrite expires
+
+VOLUME /var/www/html
+
+ENV WORDPRESS_VERSION 5.2.2
+ENV WORDPRESS_SHA1 3605bcbe9ea48d714efa59b0eb2d251657e7d5b0
+
+RUN set -ex; \
+        curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
+        echo "$WORDPRESS_SHA1 *wordpress.tar.gz" | sha1sum -c -; \
+# upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
+        tar -xzf wordpress.tar.gz -C /usr/src/; \
+        rm wordpress.tar.gz; \
+        chown -R www-data:www-data /usr/src/wordpress
+
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
+-----------------------------------
+e.g.: 5 - Dockerfile-pythonbased-app
+
+FROM python:3.9-buster
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV FLASK_RUN_HOST=0.0.0.0
+
+EXPOSE 5000
+
+CMD ["flask", "run"]
+-----------------------------------
+
+-> Now build the image
+#docker build Dockerfile -t application/sample-app
+
+-> if we want to make this own created image publicaly in docker registery
+- before pushing any image we need to login to our account
+#docker login
+#docker push application/sample-app
+-----------------------------------
+
+--> Environment Variables
+#docker run -p 38282:8080 --name blue-app -e APP_COLOR=blue -d kodekloud/simple-webapp
+#docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name mysql-db mysql
+#docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 mysql
+-----------------------------------
+
+--> Docker Compose
+- we need to configure in yaml file
+- run multiple services we use docker compose
+e.g.: docker-compose.yml
+------------
+services:
+	web:
+		image: "sammek/sample-webapp"
+	database:
+		image: "mongodb"
+	messaging:
+		image: "redis:alpine"
+	orchestration:
+		image: "ansible"
+------------
+To run this we just need to run command : 
+#docker-compose up
+
+--> Docker run --links (if two diff instance/service depens on each other liks app server and db server)
+#docker run -d --name=vote -p 5000:80 --link redis:redis voting-app
+#docker run -d --name=worker -p 5000:80 --link db:db --link redis:redis worker
+
+--> e.g.:
+#docker run -d --name=redis redis
+#docker run -d --name=db 	postgres:9.4
+#docker run -d --name=vote -p 5000:80 --link redis:redis voting-app
+#docker run -d --name=result -p 5001:80 --link db:db result-app
+#docker run -d --name=worker --link db:db --link redis:redis worker
+
+-> after running all these resources now creste docker-compose file
+-> docker-compose.yml
+------------
+services:
+  redis:
+    image: redis
+  db:
+    image: postgres:15-alpine
+  vote:
+    image: voting-app
+    ports:
+      - 5000:80
+    links:
+      - redis
+  worker:
+    image: worker-app
+    links:
+      - db
+      - redis
+  result:
+    image: result-app
+    ports:
+      - 5001:80
+    links:
+      - db
+------------
+To run this we just need to run command : 
+#docker-compose up
+
+https://docs.docker.com/compose/
+
+https://docs.docker.com/engine/reference/commandline/compose/
+
+https://github.com/dockersamples/example-voting-app
+
+--> Docker Engine
+1) namespace (what you are allow to see)
+2) c-group (quota) (How much you are allow to use)
+3) union file system
+
+-> Docker engine is a part of -> Docer CLI - REST API - Docker Deamon
+
+-> if docker CLI is not in same host, it's in another system and docker engine in remote host
+#docker -H=10.123.2.1:2375 run nginx
+
+-> Namespaces
+- docker use namespaces to isolate workspac
+
+-> cgroups
+- limit the container to use memory
+#docker run --cpus=.5 ubuntu
+#docker run --memory=100m ubuntu
+
+--> Docker Storage and File System
+- File System
+	- /var/lib/docker
+- Layered architecture (docker file) (image layer)
+	- Layer 1 : Base Ubuntu layer
+	- Layer 2 : Chnages in apt packages
+	- Layer 3 : Chnages in pip packages
+	- Layer 4 : Source code
+	- Layer 5 : Update entrypoint
+	after running image (docker run)
+	- Layer 6 : Container Layer 
+- Volume 
+#docker run -v /data/mysql:/var/lib/mysql mysql
+#docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
+#docker run -v /opt/data:/var/lib/mysql -d --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 mysql
+
+--> Dcoker Networking
+- V switch
+- Docker 0 - switched based router - DDI - Ip forwarding - PATing
+- Switch + Router
+
+- When we install docker it will creste 3 network automatically
+	- Bridge (default network)
+		#docker run ubuntu
+	- none
+		#docker run ubuntu --network=none
+		#docker run --name alpine-2 --network=none alpine
+	- host
+		#docker run ubuntu --network=host
+		
+- Create our own internal network
+#docker network create --driver bridge --subnet 182.18.0.0/16 custom-isolated-network
+#docker network ls
+#docker inspect <network_id>
+#docker network inspect bridge
+
+- Create a new network named wp-mysql-network using the bridge driver. Allocate subnet 182.18.0.1/24. Configure Gateway 182.18.0.1
+#docker network create --driver bridge --subnet 182.18.0.1/24 --gateway 182.18.0.1 wp-mysql-network
+#docker network inspect wp-mysql-network
+
+- Deploy a mysql database using the mysql:5.6 image and name it mysql-db. Attach it to the newly created network wp-mysql-network
+Set the database password to use db_pass123. The environment variable to set is MYSQL_ROOT_PASSWORD.
+#docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name mysql-db --network wp-mysql-network mysql:5.6
+
+- Deploy a web application named webapp using the kodekloud/simple-webapp-mysql image. Expose the port to 38080 on the host.
+The application makes use of two environment variable:
+1: DB_Host with the value mysql-db.
+2: DB_Password with the value db_pass123.
+Make sure to attach it to the newly created network called wp-mysql-network.
+Also make sure to link the MySQL and the webapp container.
+#docker run --network=wp-mysql-network -e DB_Host=mysql-db -e DB_Password=db_pass123 -p 38080:8080 --name webapp --link mysql-db:mysql-db -d kodekloud/simple-webapp-mysql
+
+- DDI is shorthand for the integration of DNS, DHCP, and IPAM (IP Address Management) into a unified service or solution. 
+# sysctl -a | grep ip_forward
+# iptables -L
+
+--> Docker Registry
+- for private regisstry we have to login as private
+#docker login private-regisstry.io
+then
+#docker run private-regisstry.io/app/internal-app
+
+- Deploy private registery
+#docker run -d -p 5000:5000 --name regisstry registery:2
+#docker image tag my-image localhost:5000/my-image
+#docker push localhost:5000/my-image
+#dockr pull localhost:5000/my-image
+#docker pull 192.168.56.100:5000/my-image
+
+- Let practice deploying a registry server on our own.
+Run a registry server with name equals to my-registry using registry:2 image with host port set to 5000, and restart policy set to always.
+Note: Registry server is exposed on port 5000 in the image.
+Here we are hosting our own registry using the open source Docker Registry.
+#docker run -d -p 5000:5000 --restart=always --name my-registry registry:2
+
+- Now its time to push some images to our registry server. Let's push two images for now .i.e. nginx:latest and httpd:latest.
+Note: Don't forget to pull them first.
+To check the list of images pushed , use curl -X GET localhost:5000/v2/_catalog
+Ans:
+Run: 
+#docker pull nginx:latest 
+then 
+#docker image tag nginx:latest localhost:5000/nginx:latest 
+and finally push it using 
+#docker push localhost:5000/nginx:latest
+We will use the same steps for the second image 
+#docker pull httpd:latest 
+and then 
+#docker image tag httpd:latest localhost:5000/httpd:latest 
+and finally push it using 
+#docker push localhost:5000/httpd:latest
+
+--> Container Orchestration
+-> Docker Swarm
+- combine multiple docker machines together
+- from multimple host one make it as a swarm manger and other as slave/worker
+- And the run below command on swarm manager
+#docker swarm init
+- this command provides link to run on worker ndes to join 
+
+- Docker service
+#dockr service create --replcas=3 nodejs
+

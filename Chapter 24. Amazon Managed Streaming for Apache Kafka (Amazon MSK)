@@ -1,0 +1,662 @@
+******* Amazon Managed Streaming for Apache Kafka (Amazon MSK) *******
+
+--> Securely stream data with a fully managed, highly available apache kafka service
+
+--> Amazon MSK is highely available service, so it must be configured to run in a minimum of two availability zones in your preferred region.
+
+--> To comply with security practices, the broker are usually configured in private subnets in each region
+
+--> For Amazon MSK to invoke Lambda, you must ensure that there is a NAT gateway running in the public subnet of each region
+
+--> It's possible to route the traffic to a single NAT Gateway in one AZ for test and development workloads.
+
+--> For redundancy in production workloads, it's recommended that there is one NAT Gateway available in each availability zone.
+
+--> Benefits and features
+- Apache Kafka compatible
+- Fully managed
+- Highly available
+
+--> Brokers 
+- actual apache kafka server
+
+--> A typical provisioned cluster takes up to 15 minutes to create.
+
+-->> Practical - MSK Cluster - Producer and consumer
+
+Step 1:
+------------
+Cretae VPC -- Name -- virtual-private-cloud  IPv4 CIDR -- 10.0.0.0/16
+Host address range -- 10.0.0.1 - 10.0.255.254
+
+Step 2:
+-----------
+Create 2 public subnets 
+Public-Subnet-A--10.0.0.0/24
+Host address range -- 10.0.0.1 - 10.0.0.254
+
+Public-Subnet-B--10.0.1.0/24
+Host address range -- 10.0.1.1 - 10.0.1.254
+
+Step 3:
+------------
+Check the default route table -- you will see the above 2 subnets have not been explicitly associated with any route tables and are therefore associated with the main route table.
+
+Step 4:
+------------
+Create a IGW & connect with VPC
+
+Step 5:
+------------
+Add the IGW in default route table
+
+
+Step 6:
+---------
+Launch MSK Cluster with vpc you created , unauthorised access allowed , plaintext enxryption
+(keep security group as it is)
+
+Step 7:
+------------
+Launch Linux EC2
+In the list Network choose the VPC previously created.
+In the list Auto-assign Public IP, choose Enable.
+
+Step 8:
+---------
+Once the client for Amazon MSK has been created, the security group rules must be configured to allow the connection between the cluster and the client that we have just created.
+
+For that , Add the security group id of ec2 to msk cluster security group all traffic
+
+Repeat these steps to add an inbound rule in the security group that corresponds to your client computer to allow it to receive traffic from the security group from the VPC. Now your client computer can communicate bidirectionally with the MSK Cluster.
+
+Once this is done, the newly created and configured client can be accessed.
+
+Step 9:
+-----------
+sudo yum install java-1.8.0-openjdk
+##if not working go with following commands:
+sudo amazon-linux-extras enable corretto8
+sudo yum install java-1.8.0-amazon-corretto
+sudo yum install java-1.8.0-amazon-corretto-devel
+>The installation location is /usr/lib/jvm/java-1.8.0-amazon-corretto.<cpu_arch>.
+
+wget https://archive.apache.org/dist/kafka/3.5.1/kafka_2.12-3.5.1.tgz
+tar -xvf kafka_2.12-3.5.1.tgz
+cd kafka_2.12-3.5.1
+
+-> To Create topic in MSK cluster
+bin/kafka-topics.sh --create --topic demotesting2 --bootstrap-server b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092,b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092 --replication-factor 1 --partitions 1
+
+Step 10:
+-----------
+Start the kafka Producer
+---------------------------
+bin/kafka-console-producer.sh --topic demotesting2 --bootstrap-server b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092,b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092 
+
+In a new console start the kafka Consumer
+---------------------------
+cd kafka_2.12-3.5.1  (go to that dir - /usr/lib/jvm/kafka_2.12-3.5.1)
+
+bin/kafka-console-consumer.sh --topic demotesting2 --bootstrap-server b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092,b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092 
+
+--> Now you can see The producer is publishing the messages in the broker which is managed by MSK from MSK our conumer is conuming that messages
+
+Step 11:
+-----------
+Install confluent kafka within kafka_2.12-3.5.1)
+wget  http://packages.confluent.io/archive/5.1/confluent-5.1.2-2.11.zip
+unzip confluent-5.1.2-2.11.zip
+
+export CONFLUENT_HOME=/usr/lib/jvm/kafka_2.12-3.5.1/confluent-5.1.2
+export PATH=$PATH:$CONFLUENT_HOME/bin
+(Note , if installing confluent kafka , where kafka is installed (i.e. in /home/ec2-user) , then CONFLUENT_HOME should be -- /home/ec2-user/confluent-5.1.2)
+
+Step 12:
+-----------
+Change the bootstrap.servers in  confluent-5.1.2/etc/kafka-rest/kafka-rest.properties 
+
+vi /usr/lib/jvm/kafka_2.12-3.5.1/confluent-5.1.2/etc/kafka-rest/kafka-rest.properties
+And Make chnages in "bootstrap.servers=" 
+
+e.g: bootstrap.servers=PLAINTEXT://b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092,PLAINTEXT://b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092
+
+Step 13:
+-----------
+Start Kafka Rest (below command is a single line)
+/usr/lib/jvm/kafka_2.12-3.5.1/confluent-5.1.2/bin/kafka-rest-start /usr/lib/jvm/kafka_2.12-3.5.1/confluent-5.1.2/etc/kafka-rest/kafka-rest.properties 
+
+(Don't forget to allow all traffic to the security group of EC2 client machine)
+-> now allow rest proxy via internet all traffic allow in ec2 sg add that
+-> trigger it from the POSTMAN
+
+**** Download Postman
+
+Url to post messages using Kafka rest API--
+http://52.70.96.0:8082/topics/demotesting2
+
+Content-Type: application/vnd.kafka.json.v2+json
+
+Sample Message:
+------------------
+{"records":[{"value":{"name": "sammek sample"}}]}
+
+Start consumer to see the messages:
+----------------------------------------
+cd kafka_2.12-2.8.1
+bin/kafka-console-consumer.sh --topic demotesting2 --bootstrap-server {Put the MSK bootstrap server URLs here} 
+
+**** This is how we can run kafka rest proxy and publish the messages in our MSK cluster using API
+------------------END----------------------
+
+==> Govern how your clients interact with Apache Kafka using API Gateway
+https://aws.amazon.com/blogs/big-data/govern-how-your-clients-interact-with-apache-kafka-using-api-gateway/
+
+insted of using this direct http url we can use "API Gateway" for high security of data
+http://52.70.96.0:8082/topics/demotesting2
+
+--> Why to use API Gateway 
+- IP lavel filtering 
+- throtling
+- qupta / parts
+- IAM level access 
+- API key based security
+
+**** MSK power is we no need to thik about broker availability / broker is down or not / zookper is working properly or not, everything is managed by AWS.
+
+------------------END----------------------
+
+==> Creating a Serverless Apache Kafka(MSK) publisher using AWS Lambda
+
+-->> Practical : Send data to MSK Topic from Lambda using python
+
+-> Diffrent situations :
+Any Third party -> API gateway -> AWS Lambda -> Kafka
+Any Third party -> AWS SQS -> AWS Lambda -> Kafka
+Any Third party -> DynamoDB Table -> DynamoDB Stream -> AWS Lambda -> Kafka
+
+Step1: 	
+Setup All VPC, EC2 and MSK first as we created in previous Practical
+
+Step2:
+
+Start Python Producer:
+----------------------------------
+Install the Python Module:
+------------------------------------
+yum install python3-pip
+pip install kafka-python
+
+Producer Code:
+------------------------------------
+-> Start python
+Hit command : 
+#python3
+And execute below python code
+
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
+
+topic_name='demotesting2'
+producer = KafkaProducer(bootstrap_servers=['b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092','b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092'],value_serializer=lambda x: dumps(x).encode('utf-8'))
+
+for e in range(1000):
+    data = {'number' : e}
+    print(data)
+    producer.send(topic_name, value=data)
+    sleep(1)
+
+
+Code to create the Lambda Layer:
+---------------------------------------------------------
+sudo apt-get update
+sudo apt install python3-virtualenv
+virtualenv kafka_yt
+source kafka_yt/bin/activate
+python3 --version  
+sudo apt install python3-pip
+python3 -m pip install --upgrade pip
+mkdir -p lambda_layers/python/lib/python3.8/site-packages
+cd lambda_layers/python/lib/python3.8/site-packages
+pip install  kafka-python -t .
+cd /mnt/c/Users/USER/lambda_layers
+sudo apt install zip
+zip -r kafka_yt_demo.zip *
+
+
+Lambda Security Confuguration:
+--------------------------------------
+Provide AmazonVPCFullAccess to the Lambda execution role
+Configure VPC for Lambda (Choose both subnets & provide the security group of MSK Cluster)
+And Permission add role give access of Kafka SG
+
+Lambda Code to publish messages in MSK Topic:
+----------------------------------------------------------------
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
+
+topic_name='demotesting2'
+producer = KafkaProducer(bootstrap_servers=['b-2.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092','b-1.demoyttest123.kdu43y.c4.kafka.us-east-1.amazonaws.com:9092'],value_serializer=lambda x: dumps(x).encode('utf-8'))
+
+def lambda_handler(event, context):
+    for e in range(10):
+        data = e
+        producer.send(topic_name, value=data)
+        sleep(1)
+
+------------------END----------------------
+
+==> Using Amazon MSK as an event source for AWS Lambda
+
+-->> Practical
+
+Kafka -> AWS Lambda -> External http/https server
+
+Kafka -> AWS Lambda -> RDS database
+
+Kafka -> AWS Lambda -> S3 BUCKET with file
+
+https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html
+
+Step 1:
+------------
+Cretae VPC -- Name -- virtual-private-cloud-lambda  IPv4 CIDR -- 11.0.0.0/16
+Host address range -- 11.0.0.1 - 11.0.255.254
+
+Step 2:
+-----------
+Create 2 public subnets 
+Public-Subnet-A-lambda--11.0.0.0/24--us-east-1a
+Host address range -- 11.0.0.1 - 11.0.0.254
+
+Public-Subnet-B-lambda--11.0.1.0/24--us-east-1b
+Host address range -- 11.0.1.1 - 11.0.1.254
+
+Private-Subnet-A-lambda--11.0.2.0/24--us-east-1a
+Host address range -- 11.0.2.1 - 11.0.2.254
+
+Private-Subnet-B-lambda--11.0.3.0/24--us-east-1b
+Host address range -- 11.0.3.1 - 11.0.3.254
+
+Step 3:
+------------
+Create an IGW and attach with VPC
+
+Step 4:
+---------
+Create 2 route tables 1 for Public subnets and 1 for Private subnets
+(Attach IGW with Public route tables)
+
+Step 5:
+-----------
+Create NAT Gateway in public subnet and attach with Private Subnet route table  
+
+Step 6:
+------------
+Launch MSK Cluster in Private subnets(keep unauthorised access and plaintext authentication)
+
+Step 7:
+-------------
+Launch an EC2 in a public subnet in same VPC as of MSK Cluster in a public subnet.
+Launch an EC2 in private subnet in same VPC as of MSK Cluster in a private subnet.
+
+Step 8:
+-----------
+Add private ec2 security group and msk security group both way all traffic.
+
+Step 9:
+-------------
+Enter in public subnet , from there enter in private subnet.
+
+Step 7:
+-----------
+sudo yum install java-1.8.0-openjdk
+##if not working go with following commands:
+sudo amazon-linux-extras enable corretto8
+sudo yum install java-1.8.0-amazon-corretto
+sudo yum install java-1.8.0-amazon-corretto-devel
+>The installation location is /usr/lib/jvm/java-1.8.0-amazon-corretto.<cpu_arch>.
+
+wget https://archive.apache.org/dist/kafka/3.5.1/kafka_2.12-3.5.1.tgz
+tar -xvf kafka_2.12-3.5.1.tgz
+cd kafka_2.12-3.5.1
+
+bin/kafka-topics.sh --create --topic demotesting2 --bootstrap-server b-1.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092,b-2.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092 --replication-factor 1 --partitions 2
+
+Step 8:
+----------
+Perform local testing:
+-----------------------------
+bin/kafka-console-producer.sh --topic demotesting2 --bootstrap-server b-1.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092,b-2.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092
+
+In a new console start the kafka consumer--
+cd kafka_2.12-2.8.1
+bin/kafka-console-consumer.sh --topic demotesting2 --bootstrap-server b-1.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092,b-2.demoytlambda123.ojlb4b.c4.kafka.us-east-1.amazonaws.com:9092
+
+Step 8:
+-----------
+You set up a target Lambda function with MSK and VPC access.
+
+Step 9:
+-----------
+Create Lambda Function with MSK Trigger 
+
+--> In Lambda Set permission Role : AWSLambdaMSKExecutionRole
+
+
+Sample Event:
+------------------
+{
+   "eventSource":"aws:kafka",
+   "eventSourceArn":"",
+   "bootstrapServers":"",
+   "records":{
+      "demotesting2-0":[
+         {
+            "topic":"demotesting2",
+            "partition":0,
+            "offset":34,
+            "timestamp":1674023898925,
+            "timestampType":"CREATE_TIME",
+            "value":"eyJIZWxsbyI6IldvcmxkIn0=",
+            "headers":[
+               
+            ]
+         }
+      ]
+   }
+}
+
+import base64
+import boto3
+import json
+
+def lambda_handler(event, context):
+    # TODO implement
+    print(event)
+    for partition_key in event['records']:
+        partition_value=event['records'][partition_key]
+        for record_value in partition_value:
+             print((base64.b64decode(record_value['value'])).decode())
+
+
+--> Add trigger
+select kafka and add
+
+------------------END----------------------
+
+
+==> End to End Streaming Data Pipeline Using AWS MSK & AWS Serverless Services
+
+--> Practical : Building a serverless kafka data pipeline
+
+Step 1:
+--------
+Create a NAT Gateway & attach with Private subnet route table
+
+Step 2:
+---------
+Launch one MSK Cluster in private subnet
+
+Step 3:
+----------
+Create a Lambda code (Python 3.8)
+
+
+
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
+import json
+
+topic_name='{Provide the topic name here}'
+producer = KafkaProducer(bootstrap_servers=['b-1.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092','b-2.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092'],value_serializer=lambda x: dumps(x).encode('utf-8'))
+
+def lambda_handler(event, context):
+    print(event)
+    for i in event['Records']:
+        sqs_message =json.loads((i['body']))
+        print(sqs_message)
+        producer.send(topic_name, value=sqs_message)
+    
+    producer.flush()
+	
+Step 4:
+----------
+Increase the timeout for Lambda to 2 mins , provide SQS,MSK and VPC access & put in Private VPC (where MSK Brokers are running)
+
+Configure Lambda Layer--
+Reference:
+------------
+https://youtube.com/watch?v=uleTVY7LkMM&feature=shares
+
+Step 5:
+---------
+For load balance purpose we have to implement SQS
+Launch one SQS Queue with visibility timeout to 240 sec
+
+Step 6:
+----------
+Create an API Gateway and setup integration with SQS Queue
+
+Step 7:
+---------
+Test the integration , if works , then setup integration with AWS Lambda Producer
+
+https://sed4lpnv4h.execute-api.us-east-1.amazonaws.com/publisher
+
+Step 8:
+---------
+Create an s3 bucket for data archival  - lambda-layer-python-code
+
+Step 9:
+---------
+Configure Amazon Kinesis
+-Create Firehose stream
+
+
+Step 10:
+-----------
+Configure the Consumer Lambda Code:
+
+import base64
+import boto3
+import json
+
+client = boto3.client('firehose')
+
+def lambda_handler(event, context):
+	print(event)
+	for partition_key in event['records']:
+		partition_value=event['records'][partition_key]
+		for record_value in partition_value:
+			actual_message=json.loads((base64.b64decode(record_value['value'])).decode('utf-8'))
+			print(actual_message)
+			newImage = (json.dumps(actual_message)+'\n').encode('utf-8')
+			print(newImage)
+			response = client.put_record(
+			DeliveryStreamName='{Kinesis Delivery Stream Name}',
+			Record={
+			'Data': newImage
+			})
+
+Step 11:
+-----------
+Provide KinesisFirehose write access , VPC access , MSK access to this Lambda
+
+
+Step 12:
+----------
+Launch an EC2 in a public subnet in same VPC as of MSK Cluster in a public subnet.
+Launch an EC2 in private subnet in same VPC as of MSK Cluster in a private subnet.
+
+
+Step 13:
+-----------
+Add private ec2 security group and msk security group both way all traffic.
+
+Step 14:
+-------------
+Enter in public subnet , from there enter in private subnet.
+
+sudo yum install java-1.8.0-openjdk
+##if not working go with following commands:
+sudo amazon-linux-extras enable corretto8
+sudo yum install java-1.8.0-amazon-corretto
+sudo yum install java-1.8.0-amazon-corretto-devel
+>The installation location is /usr/lib/jvm/java-1.8.0-amazon-corretto.<cpu_arch>.
+
+wget https://archive.apache.org/dist/kafka/3.5.1/kafka_2.12-3.5.1.tgz
+tar -xvf kafka_2.12-3.5.1.tgz
+cd kafka_2.12-3.5.1
+
+bin/kafka-topics.sh --create --topic demotesting2 --bootstrap-server b-1.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092,b-2.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092 --replication-factor 1 --partitions 2
+
+
+Step 15:
+------------
+Start kafka console consumer and check whether from Lambda messages are getting published in kafka topic or not
+bin/kafka-console-consumer.sh --topic demotesting2 --bootstrap-server b-1.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092,b-2.demolambdaproj.9szxxp.c4.kafka.us-east-1.amazonaws.com:9092
+
+
+Step 16:
+------------
+Add  MSK Trigger from Consumer Lambda
+
+
+Step 17:
+---------
+Peform end to end testing
+
+{"station":"OH","temp":"26.39f"}
+{"station":"WA","temp":"40.00F"}
+{"station":"TX","temp":"15.01F"}
+{"station":"NC","temp":"32.36f"}
+{"station":"WA","temp":"62.86F"}
+{"station":"NC","temp":"49.43f"}
+{"station":"MD","temp":"2.30f"}
+
+
+------------------END----------------------
+
+==> Analyze Streaming Data from Amazon Managed Streaming for Apache Kafka Using Snowflake
+
+--> Practical : - Your apache kafka clusters using managed connectors
+
+**** MSK Connector :
+- Open source component
+- provide framework for connecting with external systems
+- eg. : database, key value store, search indexing, file systems.
+- Kafka to third party
+- third party to kafka
+- manually running kafka connect
+- focus on building applications rather than managing infrastructure.
+
+Launch MSK Cluster:
+----------------------
+Configure NAT Gateway & launch MSK Cluster in Private Subnet
+
+openssl genrsa -out rsa_key.pem 2048
+openssl rsa -in rsa_key.pem -pubout -out rsa_key.pub
+
+These files contain keys that may contain spaces and new line characters which need to be removed--
+export SNOWFLAKE_PVT_KEY=$(echo `sed -e '2,$!d' -e '$d' -e 's/\n/ /g' rsa_key.pem`|tr -d ' ')
+echo $SNOWFLAKE_PVT_KEY > rsa_key_p8.out
+
+Configure Snowflake:
+--------------------------
+cat rsa_key.pub
+
+DROP DATABASE IF EXISTS RAMU;
+Create database ramu;
+alter user Satadru set rsa_public_key='';
+
+desc user satadru;
+use ramu;
+show tables;
+
+
+In EC2 Client Machine:
+-----------------------------
+sudo yum install java-1.8.0-openjdk
+wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
+tar -xvf kafka_2.12-2.8.1.tgz
+cd kafka_2.12-2.8.1
+
+bin/kafka-topics.sh --create --topic demo_testing2 --bootstrap-server {} --replication-factor 1 --partitions 2
+
+
+Create Custom plugins:
+-------------------------
+https://mvnrepository.com/artifact/com.snowflake/snowflake-kafka-connector/1.5.0
+
+
+For Kafka Connect Config:
+---------------------------
+IAM Role:s3--give s3 full access
+
+Trust Relationship--
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "kafkaconnect.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "aws:SourceAccount": "Account ID"
+                }
+            }
+        }
+    ]
+}
+
+Create a cloudwatch log group
+
+
+Connector Config:
+-------------------------
+
+connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+tasks.max=8
+topics=demo_testing2
+snowflake.topic2table.map=demo_testing2:fake_data_real_time_demo
+buffer.count.records=10000
+buffer.flush.time=60
+buffer.size.bytes=5000000
+snowflake.url.name=
+snowflake.user.name=
+snowflake.private.key=
+snowflake.database.name=RAMU
+snowflake.schema.name=PUBLIC
+key.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+
+
+Test:
+-------
+Produce messages:
+---------------------
+bin/kafka-console-producer.sh --topic demo_testing2 --bootstrap-server {}
+
+Consume messages:
+---------------------
+bin/kafka-console-consumer.sh --topic demo_testing2 --bootstrap-server {}
+
+Destination:
+-----------------
+select * from ramu.public.fake_data_real_time_demo;
+
+Sample Data to Publish:
+------------------------------
+{"email":"wzanettinirp@stanford.edu","timestamp":1663420415,"event":"spamreport","gender":"Female","ip_address":"8.166.173.156"}
+{"email":"pstegersrq@reddit.com","timestamp":1664321942,"event":"spamreport","gender":"Female","ip_address":"128.214.160.228"}
+{"email":"avlahosrr@posterous.com","timestamp":1646024825,"event":"bounce","gender":"Female","ip_address":"147.51.176.231"}
+
+------------------END----------------------

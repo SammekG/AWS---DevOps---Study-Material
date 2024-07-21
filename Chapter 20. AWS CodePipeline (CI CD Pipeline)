@@ -1,0 +1,46 @@
+*********** AWS CodePipeline (CI CD Pipeline) ***********
+
+-> Use cases of AWS CodePipeline
+1) Source
+- AWS CodeCommit
+- Amazon S3
+	- Versioning
+	- Monitoring
+- Tool : GitHub , ECR
+- Supports Git command
+- GitHub Compatible
+- Can migrate repos from GitHub
+- Fully managed
+- Scalable
+- Secure
+- Highly Available
+
+2) Build
+- AWS CodeBuild
+- Tool : Jenkins
+- Fully managed
+- Scalable
+- IAM
+- Encryption
+
+3) Deploy
+- AWS CodeDeploy
+- Tool : AWS CodeDeploy
+- Services : ECS , EC2 , Elastic Beanstalk , Lambda
+- Fully managed
+- Scalable
+- Minimizes downtime
+- Centralized
+- Automated deployments
+- Simultaneous deploymnts
+
+-> IAM Roles we need
+1) AWSServiceRoleForAmazonSSM 
+- AmazonSSMServiceRolePolicy
+
+2) EC2InstanceRole 
+- AmazonSSMManagedInstanceCore
+- AmazonEC2RoleforAWSCodeDeploy
+
+4) CodeDeployRole 
+- AWSCodeDeployRole

@@ -1,0 +1,150 @@
+********************** Lambda ********************
+
+>> Lambda Service Basics
+
+- bring your own code
+- serverless compute service
+- automatically scale up and down
+- only pay for what you use
+- supports : 
+	- python
+	- java
+	- C#
+	- NodeJS
+	- Ruby
+	- GO
+	- PowerShell
+- Runtime API extention allow user other languages
+
+>> What is AWS Lambda?
+-> AWS Lambda is a serverless computing service that allows you to run programs 
+without having to worry about provisioning, maintaining, or waiting for servers to be built
+
+
+>> AWS Lambda Features
+-> Serverless: Run code without provisioning or maintaining a server.
+-> Automatic Scaling: Scale your applications automatically as per the workload.
+-> Pay per use: Billed per millisecond of use.
+-> Consistency: Performance consistency is achieved by selecting the right memory size for the function.
+-> Language support: AWS Lambda supports multiple programming languages.
+
+>> Event Sources
+AWS Lambda Event Source is any AWS Service, custom
+application, a stream of data or queue which triggers
+a Lambda function to run.
+
+>> Lambda Event Sources Type
+
+> Push-based model
+Synchronous
+Asynchronous
+
+> Pull-based model
+Stream
+Queue
+
+> Push-based model: Other service directly triggers Lambda and tells it to activate when something happens.
+
+1) Synchronous: Lamba returns a response back to the event source. 
+Services Such as : Cloudformation, Cloudfront, API Gateway, Cognito
+2) Asynchronous: For asynchronous invocations, Lambda does handle retries. After Lambda is  invoked by the source, it will first place the event into a queue and immediately sends a success response back to the source. 
+Services Such as : Cloudwatch, Eventbrige, S3, SNS
+
+> Pull-based model: Information is flowing through a stream or put in a queue that Lambda
+periodically polls, and it then goes into action when certain events are detected .
+
+1) Stream: Lambda will stop polling while it retries the message. (DynamoDB, )
+2) Queue: Lambda will return the message to the queue if the invocation fails or times out but will also keep retrying until it’s either successful or expires. 
+
+
+>> Access Permissions
+1) Security is crucial when dealing with Lambda because of its
+power to run code and take actions that affect other AWS
+services.
+
+2) Two types of security permissions are needed for Lambda:
+Invocation permissions and Execution roles.
+
+3) Invocation permissions are only needed for push event
+sources and are granted through an IAM resource policy
+automatically created when configuring an AWS service as an event source.
+
+4) Execution roles grant Lambda permissions to interact with
+other AWS services. They include an IAM policy defining what Lambda is allowed to do and a Trust policy allowing Lambda to assume the execution role and perform actions on the
+other service.
+
+5) Adding the execution role to your Lambda function is the
+final step in granting permissions and policies.
+
+
+>> AWS Lambda Functions
+1) Lambda contains a Function that executes the
+programming code in one of the supported programming languages.
+
+2) The user can bring the code without changing its bulk, but a function handler must be included.
+
+3)The function handler has two objects: the event object
+and the context object. 
+
+4) Event Object: Allows the event source to pass information to the Lambda function.
+
+5) Context Object: Contains information specific to the
+runtime environment of the programming language used
+and allows communication within the function.
+
+6) The configuration of the code specifics depends on the
+programming language used.
+
+
+>> AWS Lambda Pricing
+1) Lambda's free tier allows you to use 1 million requests and 400,000GB seconds per month. 
+
+2) The main components of Lambda pricing are the number of requests and Gigabit Seconds. 
+
+3) A Lambda request starts each time it executes the function in response to an event trigger.
+
+4) Gigabit seconds are the amount of time your function runs multiplied by the amount of memory it uses.
+
+5) The amount of memory you allocate to the function determines the amount of CPU power allocated by Lambda.
+
+6) There are additional costs for including ephemeral storage and provisioned concurrency to your Lambda functions.
+
+==>
+- On demand 
+- serverless 
+- event driven task
+- execution of code
+- function in diff language and script : java, python, nodejs.... etc.
+
+- lamda step function
+	- fun1 - fun2 - fun3
+	
+-> start stop EC instance python code :
+
+>> Stop instance
+
+import json
+import boto3
+
+ec2 = boto3.resource('ec2', region_name='ap-south-1')
+def lambda_handler(event, context):
+   instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},{'Name': 'tag:type','Values':['prod']}])
+   for instance in instances:
+       id=instance.id
+       ec2.instances.filter(InstanceIds=[id]).stop()
+       print("Instance ID is stopped:- "+instance.id)
+   return "success"
+	
+>> Start instance
+
+import json
+import boto3
+
+ec2 = boto3.resource('ec2', region_name='ap-south-1')
+def lambda_handler(event, context):
+   instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']},{'Name': 'tag:type','Values':['prod']}])
+   for instance in instances:
+       id=instance.id
+       ec2.instances.filter(InstanceIds=[id]).start()
+       print("Instance ID is started:- "+instance.id)
+   return "success"

@@ -1,0 +1,80 @@
+*********** Amazon DocumentDB ***********
+
+--> Benefits and features
+- Build quickly
+- Performance at scale
+- Cost effective
+- Secure and resilient
+
+--> What does Amazon DocumentDB do?
+- Amazon DocumentDB is a type of nonrelational database that is designed to store and query JSON documents.
+
+--> What other workloads does Amazon DocumentDB support?
+- is a scalable, fully managed document database service
+- supports MongoDB workloads
+- improve performance, scalability, and availability without having to worry about managing underlying infrastructure.
+
+--> What problems does Amazon DocumentDB solve?
+- Scale compute and memory resources for each of your instances up and down in a few minutes.
+- Scale read throughput to support high-volume application requests by creating up to 16 replica instances.
+- Scale your storage volume automatically up to 64 TiB as your database storage needs grow.
+- Rely on continuous monitoring and automatic failovers.
+
+--> What are the benefits of Amazon DocumentDB?
+- Workload scalability
+- Infrastructure automation
+- Durability
+- Compatibility
+
+--> How much does Amazon DocumentDB cost?
+- On-demand instances
+- Database I/O
+- Database storage
+- Backup storage
+
+--> What are typical use cases for Amazon DocumentDB?
+- Store and query CMS data
+- Manage user profiles, preferences, and requests
+- Scale mobile and web applications
+- Manage inventory and catalog storage
+- Handle gaming and user profiles
+- Customize marketing
+
+--> Create the repository file
+echo -e "[mongodb-org-4.0] name=MongoDB Repository baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.0/x86_64/ gpgcheck=1 enabled=1 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc" | sudo tee /etc/yum.repos.d/mongodb-org-4.0.repo
+
+--> Install the MongoDB shell
+sudo yum install -y mongodb-org-shell
+
+--> Download Amazon DocumentDB public key to encrypt data in transit
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+
+--> Connect to this cluster with the mongo shell
+mongo --ssl --host docdb-2024-07-07-12-32-18.cluster-clmiiqioavbc.us-west-2.docdb.amazonaws.com:27017 --sslCAFile global-bundle.pem --username documentdb --password password
+
+--> Insert a single document (enter in MongoDB shell)
+db.collection.insert({"hello":"DocumentDB"})
+
+--> Display the record just added (MongoDB shell)
+db.collection.findOne()
+
+--> Input several records (MongoDB shell)
+db.profiles.insertMany([                  
+{ "_id" : 1, "name" : "Martha Rivera", "status": "active", "level": 12, "score":202},
+{ "_id" : 2, "name" : "Carlos Salazar", "status": "inactive", "level": 2, "score":9},
+{ "_id" : 3, "name" : "Richard Roe", "status": "active", "level": 7, "score":87},
+{ "_id" : 4, "name" : "Saanvi Sarkar", "status": "active", "level": 3, "score":27} ])
+
+--> Return all documents in "profiles" collection (MongoDB shell)
+db.profiles.find()
+
+--> Query for a single document using a filter (MongoDB shell)
+db.profiles.find({name: "Saanvi Sarkar"})
+
+--> Find and modify a record in "profiles" (MongoDB shell)
+db.profiles.findAndModify({
+query: { name: "Martha Rivera", status: "active"},
+update: { $inc: { score: 10 } } })
+
+--> Verify modification from previous command (MongoDB shell)
+db.profiles.find({name: "Martha Rivera"})

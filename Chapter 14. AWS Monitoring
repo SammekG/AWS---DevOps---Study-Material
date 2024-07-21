@@ -1,0 +1,47 @@
+********************* Monitoring *********************
+
+-> Two typles of monitoring :
+1) Local
+2) Centralized (SNMP) simple network monitoring protocol
+	- nagios
+	- zabex
+	- solar events
+	- graphana
+	- promesthies
+
+-> In AWS
+1) Cloud Watch - active monitoring tool - it can alert and take actions as well
+2) Cloud Trail - passive monitoring tool - 
+
+>> Unified cloud watch agent (to monitoring OS)
+
+Shellbomb: 
+#dd if=/dev/zero of=/dev/null &
+
+#yum history
+
+#yum history undo 3
+
+************* Steps to install unified cloud watch agent (Metrix) ***************
+
+1) sudo yum install amazon-cloudwatch-agent
+
+2) Create IAM roles to use with the CloudWatch agent on Amazon EC2 instances﻿.
+	- AmazonSSMManagedInstanceCore
+	- CloudWatchAgentServerPolicy
+
+3) attach role to ec2
+
+4) Create the CloudWatch agent configuration file with the wizard
+
+5) sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+6) Config file : /opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+7) start and run the cloudwatch agent with my config
+
+8) sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+9) systemctl status amazon-cloudwatch-agent.service
+
+/var/log/httpd/access_log

@@ -1,0 +1,11 @@
+> Security
+- Transit
+- Rest
+
+>>>> Data Resting (physical thret)
+- encription
+> In AWS : SSE (server side encryption)
+	- by default encryption in AWS : AES 256 - used common key
+	- KMS (key management service) - per account (not common)
+		- AWS Managed
+		- Client / Self Managed

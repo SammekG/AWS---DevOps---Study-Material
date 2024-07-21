@@ -1,0 +1,32 @@
+-- Queue Based Notification services
+
+SQS - Simple Queue Service
+SNS - Simple Notification Service
+Event Bridge > Third party aplication
+
+DC > Rabit MQ
+
+
+>> SQS (Simple Queue Service) - FIFO
+- Queue (Topic)
+- Message
+- Publisher - sender
+- Subsriber - receiver
+
+
+>> SNS (Simple Notification Service) Pub/sub
+- Queue (Topic)
+- Message
+- Publisher - M to M
+- Subsriber
+
+>> Event Bridge 
+- Queue (Message Bridge)
+- Message
+- Role
+- Target
+
+****In S3 : Create event notification
+
+>> Life Cycle Management
+- Access pattern is predictable

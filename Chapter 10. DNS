@@ -1,0 +1,99 @@
+********************* DNS *********************
+
+How to identify computer on network :
+Name > map to ip address > map to MAC ID
+
+1) Recognise computer by : Hostname
+
+2) IP Address
+
+>> Local address of a service : port number : 
+well known prt number : /etc/services
+c://windows/system32/drivers/etc/services
+
+ARP : address resolution protocall
+
+>> Switch - MAC-ID
+
+Last level communication on MAC ID
+
+#nslookup
+- to find name and ip
+
+#arp
+- to find mac id
+
+Two ways to resolve name in ip
+
+1) Local DNS (peer DNS)
+- not scalable
+- error 
+- used for small networks
+
+com1
+- /etc/hosts
+	- 192.168.0.10	com1.radical.com
+
+com2
+- /etc/hosts
+	- 192.168.0.11	com2.radical.com
+
+2) Global DNS
+
+>> Simple DNS
+- work with caching
+
+www.google.com -> Resolver -> /etc/hosts(Admin) if not then -> /etc/resolve.conf (Admin and DHCP server)
+
+DNS server also called as name server
+
+1) nameserver : your company DNS server ip
+2) nameserver : isp DNS server ip
+3) nameserver : 8.8.8.8
+4) nameserver : 4.4.4.4
+
+3 and 4 google dns server and used for chaching
+
+53 - named - caching file and ip return to system
+
+
+#traceroute
+#tracepath
+
+** Router discovery protocall
+
+DNS TTL 1 day
+
+/etc/nsswitch.conf  (to chnage order edit in this file)
+
+#mtrr
+
+
+>> Complex DNS
+
+- perform recurrsion
+
+www.google.com.  >> this last . known as . root server having static ip
+13 root server 
+root hint file
+
+.root DNS server
+- having TLD (top level domain)
+	- .com	ip
+	- .org	ip
+	- .gov	ip
+- maintain by ISOC and IANA
+
+.com DNS server
+- google.com	ip
+- yahoo.com		ip
+- gmail.com		ip
+
+
+SOA - start of authority
+
+DNS uses UDP protocall - fast
+
+for SOA > multiple slave server calld NS record
+
+recursive query and iterative query

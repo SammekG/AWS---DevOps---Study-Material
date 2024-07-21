@@ -1,0 +1,46 @@
+*********** API Gateway ***********
+
+- API (Application programming interface)
+- Get, Put, Post, Delete, Update etc. Methods to ue data menupulation
+
+-> Rest API
+	- works on request response 
+	
+-> Websocket
+	- works on two way communication functionality
+	
+-> RESt API Endpoint Type:
+	- Regional
+	- Private
+	- Edge optimize
+	
+-> Resource
+	- addresable entity
+	- use with API invoke URL
+	
+-> Authorizer
+	- authentication purpose
+	- cognito user
+	- custom logic
+	- lambda function
+
+-> Gatewy respone
+	- error code
+	- diff response code configure
+
+-> Models
+	- request and response payload datastructure representation
+	- Empty and error
+	
+-> Resource Policy
+	- json doc
+	- define restriction
+	- endpoint access to a perticuler ip
+	- cross account access
+
+-> Documentation
+	- API Endpoint doc
+	
+-> Stages
+	- to deploy any api endpoint
+	- e.g.: dev, prod etc

@@ -1,0 +1,1127 @@
+****************** Jenkins ******************
+
+SDLC : 
+
+>> Previous :
+- Design
+- Coding
+- Testing
+- Handover
+
+>> DevoOps :
+- Plan
+- code
+- build
+- test
+- release
+- deploy
+- operate
+- monitor
+
+>> Challenges
+- Slower Releases
+- Manual Builds
+- Non Repetable Processes
+- No automations
+
+>> Solution : Jenkins
+- Automated builds
+- Automated Tests
+- Automated CI/CD pipeline
+- Automated deployments
+- Ability to install Jenkins locally
+- Jenkins support and Plugins
+
+>> What is Jenkins
+Jenkins is one of the most popular automation tool used worldwide for continuous integration and continuous delivery.
+Jenkins is a free and open-source automation server that enables developers to build, integrate, and test code automatically as soon as it is committed to the source repository.
+
+>> Why Jenkins?
+- When working on a project with different teams, developers often face issues with different teams using different CI tools, version management, and other tools.
+- Open-source	
+- 1000+ plugins	
+- Free	
+- Paid, Enterprise
+- Jenkins is free and you don’t have to pay for anything. Jenkins can be hosted on a Virtual Machine, a container. Or even locally for development purposes.
+- Jenkins is well tested and provide several integrations with 1800+ plugins to support build, deployment and automation for the project
+
+Setting up a CI/CD toolchain for each new project will lead to certain challenges like:
+•	Slower Releases
+•	Manual Builds
+•	Non-repeatable processes
+•	No Automations
+
+Jenkins is the solution to those challenges.
+It provides:
+•	Automated builds
+•	Automated Tests
+•	Automated CI/CD pipelines
+•	Automated deployments 
+•	Ability to install Jenkins locally
+•	Jenkins support and Plugins
+
+>> Continuous Integration
+Continuous Integration is a process in which the code is merged from multiple contributors and added to a single repository.
+In simple words, CI is a process to take the code then package it and send it to the CD for further processing.
+
+>> Continuous Deployment
+Continuous Deployment is an automated process in which the code is taken from the repository and deployed to the system.
+
+- CI/CD in simple words is a process to take a code, package it up and
+deploy it to a system that can be serverless, a VM, or a container. CI/CD can be broken down into 3 steps:
+•	CI – Continuous Integration
+•	CD – Continuous Delivery
+•	CD – Continuous Deployment
+
+>> The Key Pieces of CI
+Key Processes of Continuous Integration
+•	Package up the code (from Git) 
+•	Test the code (run unit tests, integration tests, etc)
+•	Run security checks against the code
+
+>> Continuous Integration (CI)
+Think of the Continuous Integration process like a gift you're wrapping
+
+•	The gift comes in pieces
+•	You put the gift together (maybe a toy chest/box)
+•	The gift gets wrapped in wrapping paper
+•	You put it in the car and deliver it to the person.
+
+>> Continuous Deployment vs Continuous Delivery
+The basic difference between Continuous Delivery and Continuous Deployment is that in Continuous Delivery to deploy the code after the CI process you have to manually trigger it via some button to deploy on the system whereas in Continuous Deployment this process is automatic.
+
+>> Key Pieces of CD
+Key Pieces of CD:
+•	Ensure you're authenticated to the system or wherever you're deploying
+•	Ensure that the code that's being deployed is working as expected once it's deployed
+
+>> Jenkins CLI
+> To authenticate
+java -jar jenkins-cli.jar -s http://localhost:8080/ -auth admin:11ccaf7d17503c293adeb8731905b4c00d
+
+> To List jobs
+java -jar jenkins-cli.jar -s http://localhost:8080/ -auth admin:11ccaf7d17503c293adeb8731905b4c00d -webSocket list-jobs
+
+> To Build Job
+java -jar jenkins-cli.jar -s http://localhost:8080/ -auth admin:11ccaf7d17503c293adeb8731905b4c00d -webSocket build sam2
+
+> To Check which port use
+curl -Lv http://localhost:8085/login 2>&1 | grep -i 'x-ssh-endpoint'
+
+> Let us begin interacting with Jenkins over ssh with the user mike
+ssh -i /home/sam2/.ssh/jenkins_key -l mike -p 8022 jenkins-server help
+-i flag is used to point to mike's private SSH key. Remember, we have already added the public key in the Jenkins configuration.
+-l is the login user which in our example is mike
+-p is the port which we found out in the previous step to be 8022
+
+> Safely restrat jenkins
+ssh -i /home/mike/.ssh/jenkins_key -l mike -p 8022 jenkins-server  safe-restart
+
+> Generate Key
+ssh-keygen -t rsa
+
+> Use Jenkins CLI from the terminal
+java -jar jenkins-cli.jar -s http://localhost:8080 -auth 'sam2:sam2' who-am-i
+
+> Install the Bitbucket Branch Source plugin using the Jenkins CLI.
+java -jar jenkins-cli.jar -s http://localhost:8085 -auth 'admin:Adm!n321' install-plugin cloudbees-bitbucket-branch-source
+service jenkins restart
+
+> Upgrade the cloud-stats plugin to the latest available version using the Jenkins CLI.
+java -jar jenkins-cli.jar -s http://localhost:8085 -auth 'admin:Adm!n321' install-plugin cloud-stats
+service jenkins restart
+
+> Disable the github plugin using the Jenkins CLI.
+java -jar jenkins-cli.jar -s http://localhost:8085 -auth 'admin:Adm!n321' disable-plugin github -restart -r
+
+**** plugins
+> project related plugins
+
+> Plugins are used in Jenkins to enhance Jenkins functionality and cater to user-specific needs.
+Just like how Gmail, Facebook and LinkedIn help you connect your one service to another,
+plugins also work the same way and allow us to connect one service to other services and
+work with other products.
+
+> Assign Role to user : 
+- install - Role-based Authorization Strategy
+
+> For example, you want to connect to Azure from Jenkins you would need to download Azure Plugin which
+will allow you to connect to Azure at a programmatic level.
+Similarly, we can have other integrations with AWS, GitHub, etc using plugins.
+
+> Which one of the following authorization types are available in Jenkins?
+- project based matrix authorization strategy
+- Matrix-based security
+- Legacy mode
+- role-based strategy
+
+> Change the default number of executors to 4 in Jenkins configuration settings.
+1: Go to Manage Jenkins and click on System under System Configuration.
+2: Then input value 4 in the box under # of executors.
+3: Click on Save button on bottom of the window.
+
+> Add Maven installations in Jenkins as per details mentioned below:
+1: Go to Manage Jenkins and click on Tools under System Configuration.
+2: Then Click on Add Maven button under Maven section.
+3: By default the Installer is set to Install from Apache, so you don't need to change that.
+4: Now add a name dev_maven and select the version 3.8.4 from the drop down menu.
+5: Click on the Save button on bottom of the page.
+
+>> Administrating in Jenkins
+- Backup
+- Restore
+- Monitor
+- Scale
+- Manage
+
+>> Which file to Backup?
+- $JENKINS_HOME 
+	-> Configuration File (config.xml) 
+	-> jobs (All pipelines)
+	
+>> Jenkinsfile
+Jenkinsfile is a text file that contains definitions. This could be templates or instructions. It tells pipelines what they should be doing and what services and plugins they should be interacting with.
+
+Components of Jenkinsfile:
+1)	Pipeline – The task you are trying to accomplish
+2)	Build Agent – The place where you run your pipeline
+3)	Stages – Staging/Production/UAT
+4)	Steps – Work done in the pipeline
+
+>> Build Agents
+Build Agents are systems that run the processes throughout the
+pipelines.
+Build agents help in building codes, deploying, and running
+automated tests. It is a system that runs the entire workload.
+
+>> Create Build Node 
+- Manage Jenkins -> Manage Nodes and cloud -> New Node.
+
+>> To build job on created agent 
+- Job Config -> General -> Restrict where the project can be run -> Give Agent name.
+
+>> BlueOcean; New & Improved CICD!
+The whole idea of BlueOcean is a new UI experience for CICD in Jenkins
+•	Jenkins was definitely falling behind from a UI standpoint
+•	There were a ton of other CICD tools that felt much easier
+to use from a UI perspective
+•	BlueOcean is meant to changed that narrative
+
+>>What Are We Getting Out Of BlueOcean?
+•	Sophisticated visualizations of continuous delivery (CD) Pipelines, allowing for fast and
+intuitive comprehension of your Pipeline’s status.
+•	Pipeline editor - makes the creation of Pipelines approachable by guiding the user through an intuitive and visual process to create a Pipeline.
+•	Personalization to suit the role-based needs of each member of the team.
+•	Pinpoint precision when intervention is needed and/or issues arise. Blue Ocean shows where in the pipeline attention is needed, facilitating exception handling and increasing productivity.
+•	Native integration for branch and pull requests, enables maximum developer productivity
+when collaborating on code with others in GitHub and Bitbucket.
+
+> Easier to use
+
+> Sophisticated visualizations
+
+> Fast and intuitive Pipeline status
+
+> Pipeline editor
+
+> Personalization
+
+> Pinpoint precision
+
+> Native integration for branch and pull requests
+
+>> Jenkins Security
+Jenkins access control is split into two parts:
+1)	Authentication (users prove who they are) is done using a security realm. The security realm determines user identity and group memberships.
+2)	Authorization (users are permitted to do something) is done by an authorization strategy. This controls whether a user (directly or through group memberships) has a permission
+
+>> Common Jenkins Security Mistakes
+Anyone can do anything
+This authorization strategy is very rarely a good choice, as it allows even anonymous users to administer Jenkins. As a rule of thumb, it should not be used. Never rely on the Jenkins URL to not be known outside your team or organization alone for security.
+
+Logged-in users can do anything
+This authorization strategy can be a sensible choice as long as only fully trusted users have accounts to access Jenkins. This is the default with Jenkins’s single admin user when setting up Jenkins with the setup wizard.
+Switching to an authentication realm that allows untrusted users to have an account later will result in those users getting administrative access to Jenkins if you keep this authorization stategy. Examples include enabling account signup for Jenkins' own user database, or various other authorization realms, many of which (GitHub, Google, GitLab, etc.) allow anyone to sign up for an account.
+
+Anonymous and authenticated users
+Similar to the previous items, you should generally not grant significant permissions to anonymous (the anonymous user) or authenticated (any authenticated user) when using an authorization strategy that allows finer-grained control (like Matrix Authorization Strategy).
+Granting Overall/Administer permission to anonymous is similar to Anyone can do anything, while granting that permission
+to authenticated is essentially the same as Logged-in users can do anything.
+
+Built-in node
+Users with limited permissions must not be able to configure jobs that run on the built-in node. When setting up a new Jenkins instance, adding users and switching authorization strategies, it is important to also set up distributed builds and limit what jobs are able to run on the built-in node.
+
+>> Common security mistakes that often happens when using Jenkins
+•	Anyone can do anything
+•	Logged-in users can do anything
+•	Anonymous and authenticated users
+•	Built-in node
+
+To Pull :
+> git clone https://github.com/SammekG/demo_jenkins.git
+
+Pull Using Plugins
+> Source Code Management > Git
+
+Run job using trigger : ********   Build Triggers  *************
+
+Build Triggers > Trigger builds remotely (e.g., from scripts) > Authentication Token
+
+JENKINS_URL/job/demo-git/build?token=TOKEN_NAME
+
+> http://localhost:8080/job/demo-git/build?token=mytrigger
+
+
+>>> Trigger Build Remotely : 
+Plugin need to install > Build authorization Token Root > install
+
+after change the url
+
+buildByToken/build?job=RevolutionTest&token=TacoTuesday
+
+buildByToken > http://localhost:8080
+RevolutionTest > projectname/testname
+TacoTuesday > Token name
+
+In browser : 
+
+ http://localhost:8080/buildByToken/build?job=demo-git&token=mytrigger
+
+In Script :
+
+curl http://localhost:8080/buildByToken/build?job=demo-git&token=mytrigger
+
+
+>> Build after other projects are built
+
+if you want to run diff project/test after 1 project build use this
+
+Upstream Projects : here you can see your targeted poject too build
+
+where we use this : job clone > build > test like this we design pipeline
+
+>> Build after other projects are built
+
+1) Trigger only if build is stable
+2) Trigger even if the build is unstable
+3) Trigger even if the build fails
+4) Always trigger, even if the build is aborted
+
+>> Build periodically
+ > Schedule : schedule how many times/on every which time you want to execute/run your project
+ 
+>> Poll SCM
+	> it trigger when any changes maid in source file or git repo files 
+	> check every given time if any chnages it get triggered
+	
+**************** Environment Variables ****************
+
+Command
+See the list of available environment variables
+
+Like : 
+
+JOB_NAME  
+> In CMD : %JOB_NAME%
+> In Script : ${JOB_NAME}
+
+BUILD_ID
+> In CMD : %BUILD_ID%
+> In Script : ${BUILD_ID}
+
+
+**************** Global Variables/Parameters ****************
+
+To add global variables
+
+Manage Jenkins > System > Global properties > Environment variables > Add
+
+**************** User Defined Variables/Parameters ****************
+
+> Select project > Configure > This project is parameterized > select parameter type > save > build
+> You can add multiple parameters
+
+>> Fle parameters :
+	- ssh key
+	- authentic key
+	- .qube file etc.
+
+**************** Set Time - Timeout ****************
+
+Build Environment > Terminate a build if it's stuck > Set "Time-out strategy" as per requirement
+# sleep 240
+
+In Timeout-action you can select fail to fail any project and diff options as well you can select
+
+
+>> Add timestamps to the Console Output
+	- timestamp on console output
+	
+>> Enable / Disable JOB
+
+>> Execute concurrent builds if necessary
+	multiple build at a time
+
+>> Retry Count
+	-Jenkins will try multiple times to check out 
+	
+
+>> Throttle builds
+	- The maximum number of builds allowed within the specified time period.
+
+>>>>> Use custom workspace
+	- To chnage location of your workspace
+
+==============================================================
+
+****** Block Build when Upstream/Downstream job is building ********
+
+Upstream > Parent JOB
+
+Downstream > Child job
+
+
+>>>>> Block build when upstream is building
+	when upstream job building we are nt able to build downstream job
+
+>>>>> Block build when downstream is building
+	when downstream job building we are nt able to build upstream job
+
+==============================================================
+
+************ First Pipeline **************
+
+Code > Build > test 
+
+Plugins to install : Build Pipeline
+
+Continuous Delivery : 
+It is a method where build will be deploy on production environment after manual intervention which needs to be manually approve.
+
+
+Continuous Deployment: 
+In this case, start to end automation happens where no manual intervention require and deployment happens directly on the production environment.
+
+==============================================================
+
+*********PROJECT*********
+
+>>>> Maven Projects
+
+unit test
+code quality ceck
+build
+deploy on testing environment
+deploy on staging environment
+deploy on production environment
+
+
+
+<jenkin server> 
+maven install
+unit test (mvn test) 
+build (mvn install) 
+
+<testing deploy> 
+tomcat install
+configure
+deploy on test 
+
+<prod deploy> 
+delpoy on prod
+
+
+======== manualy Deployment ===========
+
+1) clone file from git
+https://github.com/coolgourav147/spring-boot-war-example.git
+
+2) install maven on system : apt-get install maven
+
+3) mvn test  > run this command where pom.xml is present
+
+4) mvn install
+
+5) cp target/hello-world-0.0.1-SNAPSHOT.war /tmp/
+
+6) apt-get install tomcat9
+
+7) cd /var/lib/tomcat9/
+
+8) Run project (production)
+
+====== Automate Deployment ========
+
+1) Build pipeline, maven, deply to container Plugins to install
+	- jenkins related settings go to Manage Jenkins > System
+	- Tools related settings go to Manage Jenkins > Tools
+	
+2) Go to Tools > Maven installations
+	
+3) Create project Test (Job  1)
+	- Select Maven Project
+	- item name : HelloWorld-test
+	- In Build > In goals and option > test (work as mvn test)
+	- Save
+4) Create project Build (Job  2)
+	- Select Maven Project
+	- item name : HelloWorld-build
+	- take url from git which project we want t use
+	- Add in "Source Code managment" > Git > In Repository paste URL
+	- Open sourece no need for credentials
+	- In Build > In goals and option > install (work as mvn install)
+	- Save
+	
+5) Create project Deploy-Test (Job  3)
+	- In this project we dont want to build so we dont need maven
+	- select freestyle project
+	- item name : HelloWorld-Deploy-Test
+
+6) Create project Deploy-Test (Job  4)
+	- In this project we dont want to build so we dont need maven
+	- select freestyle project
+	- item name : HelloWorld-Deploy-Prod
+	
+7) Now create pipeline
+	- Select Job 1 (HelloWorld-test)
+	- In Post-build Actions > Select Build Other Project > Select job 2 (HelloWorld-build) - jar war file get create
+	- Select Job 2 (HelloWorld-build)
+	- In Post-build Actions > Select Build Other Project > Select job 3 (HelloWorld-Deploy-Test)
+	- Select Job 3 (HelloWorld-Deploy-Test) 
+	- In Post-build Actions > Select Build Other Project(manual setup) > Select job 4 (HelloWorld-Deploy-Prod)
+		- For production everything should be mannual thats why we select manual setup
+	- Save
+	
+8) Test server configure (ubuntu system)
+	- configure Tomcat
+	- apt-get update
+	- apt-get install tomcat9
+	- service tomcat9 status
+	- apt-get install tomcat9-admin
+	- ifconfig
+	- check access - ip:port (e.g. 192.168.1.13:8080)
+	- add entry to file to access - username and password
+	- vi /etc/tomcat9/tomcat-users.xml
+	- add username and password and give all roles then save file
+	- service tomcat9 restart
+	- access by url > 192.168.1.13:8080/manager/html
+	- 
+
+9) Production Server configure (another ubuntu system)
+	- configure Tomcat
+	- apt-get update
+	- apt-get install tomcat9
+	- service tomcat9 status
+	- apt-get install tomcat9-admin
+	- ifconfig
+	- check access - ip:port (e.g. 192.168.1.14:8080)
+	- add entry to file to access - username and password
+	- vi /etc/tomcat9/tomcat-users.xml
+	- add username and password and give all roles then save file
+	- service tomcat9 restart
+	- access by url > 192.168.1.14:8080/manager/html
+	
+10) Back to "HelloWorld-build"
+	- to generate war file to artifacts
+	- configure
+	- In Post-build Actions > Archive the artifacts > **/*.war
+	- after building this job 2 it will get create war file in Build artifact (select job and check)
+	- Save
+	
+11) To move any file / war file from 1 job to another we need plugins
+	- install "copy Artifact"
+
+12) pipeline job anyone can copy
+	- select job from which we want to do copy 
+	- configure
+	- select "permission to copy artifact"
+	- give name like : HelloWorld-* (any one from HelloWorld- can copy this artifact)
+
+13) Now copy artifact
+	- select job where you want to copy
+	- Job 3 - HelloWorld-Deploy-Test
+	- Build Steps > Copy artifacts from another project > select job 2
+	- save
+	
+14) after copying we need to deploy that war file to tomcat server
+	- job 3 - HelloWorld-Deploy-Test
+	- In Post-build Actions > Archive the artifacts > **/*.war
+	- In Post-build Actions > Deploy war/ear to a conainer (backend restapi hit)
+	- war flile name : **/*.war
+	- conec path : /app (give name where you want to access)
+	- Container : select Tomca 9.x Remote (give username and password of that tomcat)
+		- Tomcat URL : http://192.168.1.13:8080 (Test server tomcat URL)
+	- Run Job 3 and check tomcat URL it will display output
+	
+15) now configure production server - Job 4 - HelloWorld-Deploy-Prod
+	- first copy war file from previous job > job 3
+	- Build > Copy artifacts from another project > select job 3
+		- make sure in job 3 
+		- select "permission to copy artifact"
+		- give name like : HelloWorld-* (any one from HelloWorld- can copy this artifact)
+	- In Post-build Actions > Deploy war/ear to a conainer (backend restapi hit)
+		- war flile name : **/*.war
+		- conec path : /app (give name where you want to access)
+		- Container : select Tomca 9.x Remote (give username and password of that tomcat)
+		- Tomcat URL : http://192.168.1.14:8080 (Production server tomcat URL)
+		- Run Job 3 and check tomcat URL it will display output
+		
+16) DONE 
+	- now if we make any changes in project we just run the pipeline it will reflect automatically
+	- after changing anything in project if we want to run pipeline automatically then set
+		- Poll SCM > in schedule > H/2 **** > Save	 (set in job 1 (HelloWorld-test))
+	- we can set email notification also for every job to check sucess, fail, start, stop
+
+==============================================================		
+
+> Distributed build / jenkins master slave architecture
+
+- master distribute work in diffrent slave
+- to check slave node up/down monitor by master
+- jenkins <- -> Master <- -> Slave 
+- master also build and run the project
+
+- slave listen reques from master 
+- slave is a java application
+- slave on varity of operating system
+
+How to add slave :
+
+- Manage jenkins > 	Nodes > + New Nodes
+- Number of executors > 2 (depends)
+- Remote root directory : /var/jenkins (depends)
+- Launch method > launch agent via ssh	- Host and credentials as per server
+- launch agent (make sure java instaled on server)
+
+Assign a Job to jenkins slave :
+
+- select job > configure > Restrict where this project can be run > and give node (slave) label name here
+
+==============================================================
+
+********* JENKINS PIPELINE AS A CODE *********
+
+>>> Build a CI Pipeline
+
+pipeline{
+    agent any
+    tools{
+        go 'go-1.17'
+    }
+
+    environment{
+        GO111MODULE='on'
+    }
+
+    stages{
+        stage('Test'){
+            steps{
+                git 'https://github.cm/AdminTurnedDevOps/go-webapp-sample.git'
+                sh 'go test ./..'
+            }
+        }
+    }
+}
+
+>>> Build a CD Pipeline
+pipeline{
+    agent any
+    tools{
+        go 'go-1.17'
+    }
+
+    environment{
+        GO111MODULE='on'
+    }
+
+    stages{
+        stage('Development'){
+            steps{
+                git 'https://github.cm/AdminTurnedDevOps/go-webapp-sample.git'
+                //sh 'go test ./..'
+            }
+        }
+    }
+	stages{
+        stage('Building our image'){
+            steps{
+                app docker.build("adminturneddevops/go-webapp-sample")
+            }
+        }
+    }
+}
+
+>>> Full CI/CD Pipeline
+pipeline{
+    agent any
+    tools{
+        go 'go-1.17'
+    }
+
+    environment{
+        GO111MODULE='on'
+    }
+
+    stages{
+        stage('Test'){
+            steps{
+                git 'https://github.cm/AdminTurnedDevOps/go-webapp-sample.git'
+                sh 'go test ./..'
+            }
+        }
+    }
+	stages{
+        stage('Build and Run'){
+            steps{
+                git 'https://github.cm/AdminTurnedDevOps/go-webapp-sample.git'
+				sh 'go build .'
+				sh './go-webapp-sample'
+            }
+        }
+    }
+	stages{
+        stage('Run'){
+            steps{
+                sh 'cd /var/lib/jenkins/workspace/go-full-pipeline && go-webapp-sample &'
+            }
+        }
+    }
+}
+
+
+>>> 
+pipeline {
+    agent {
+        label {
+            label 'master'
+            customWorkspace "${JENKINS_HOME}/${BUILD_NUMBER}/"
+        }
+    }
+    environment {
+        Go111MODULE='on'
+    }
+    stages {
+        stage('Test') {
+            steps {
+                git 'https://github.com/kodekloudhub/go-webapp-sample.git'
+            }
+        }
+        stage('build') {
+            steps {
+                script{
+                    image = docker.build("adminturneddevops/go-webapp-sample")
+                }
+            }
+        }
+    }
+}
+
+>>> 
+pipeline {
+    agent {
+        label {
+            label 'master'
+            customWorkspace "${JENKINS_HOME}/${BUILD_NUMBER}/"
+        }
+    }
+    environment {
+        Go111MODULE='on'
+    }
+    stages {
+        stage('Test') {
+            steps {
+                git 'https://github.com/kodekloudhub/go-webapp-sample.git'
+            }
+        }
+        stage('build') {
+            steps {
+                script{
+                    image = docker.build("adminturneddevops/go-webapp-sample")
+                    sh "docker run -p 8090:8000 -d adminturneddevops/go-webapp-sample"
+                }
+            }
+        }
+    }
+}
+
+>> Using Container Build Agents
+pipeline {
+    agent {
+		docker { image 'golang:latest' }
+	}
+	stages {
+		steps {
+			git 'URL'
+			sh 'go version'
+		}
+	}
+}
+
+>>> Create first junkin file : 
+
+
+New Job > job name > select pipeline > Ok > Pipeline > Write Pipeline code 
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Hello This Is Test Stage'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Hello This Is Build Stage'
+            }
+        }
+        stage('Production') {
+            steps {
+                echo 'Hello This Is Prod Stage'
+            }
+        }
+    }
+}
+
+
+>>> Pipeline as code - Run a Command
+
+Windows : 
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Run a command') {
+            steps {
+                bat 'dir'
+				bat 'ipconfig'
+            }
+        }
+    }
+}
+
+Linux : 
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Run a command') {
+            steps {
+                sh 'date'
+            }
+        }
+    }
+}
+
+
+Run command in single step on single stage
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Run a command') {
+            steps {
+                bat '''
+				dir
+				ipconfig
+				path
+				'''
+            }
+        }
+    }
+}
+
+==============================================================
+
+>>> Pipeline as code - Variable/Environment Variable
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Environmental variables') {
+            steps {
+                bat 'echo %BUILD_ID%'
+            }
+        }
+    }
+}
+
+
+Uer define variables
+
+>Global environment
+
+pipeline {
+    agent any
+    
+    environment{
+        name = "sammek"
+    }
+
+    stages {
+        stage('Environmental variables') {
+            steps {
+                bat 'echo %BUILD_ID%'
+                bat 'echo %name%'
+            }
+        }
+    }
+}
+
+
+>stage level environment
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Production') {
+            environment{
+                address = 'Nigdi, Pune'
+            }
+            steps {
+                echo 'Hello This Is Prod Stage'
+                bat 'echo %address%'
+            }
+        }
+    }
+}
+
+
+>>> Pipeline as code - Build Parameters - Parameters
+
+pipeline {
+    agent any
+    
+    parameters{
+        string(name: 'person', defaultValue: 'Sammek gandhi', description: 'Who are you?')
+    }
+
+    stages {
+        stage('Parameters') {
+            steps {
+                bat 'echo %person%'
+            }
+        }
+    }
+}
+
+
+
+pipeline {
+    agent any
+    
+    parameters{
+        string(name: 'person', defaultValue: 'Sammek gandhi', description: 'Who are you?')
+        booleanParam(name: 'IsMale', defaultValue: 'True', description: '')
+        choice(name: 'City', choices: ['Pune','Mumbai','Delhi'], description: '')
+    }
+
+    stages {
+        stage('Parameters') {
+            steps {
+                bat 'echo %person%'
+                bat 'echo %IsMale%'
+                bat 'echo %City%'
+            }
+        }
+    }
+}
+
+==============================================================
+
+>>> Pipeline as code - Input Parameters - Input From User
+
+- Input on stage level only
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Continue ?') {
+            input{
+                message "Should we continue?"
+                ok "Yes we should"
+            }
+            steps {
+                echo "This is Input From User"
+            }
+        }
+    }
+}
+
+==============================================================
+
+>>>> Run perticular task anyhow if job fail or run
+
+pipeline {
+    agent any
+
+    stages {
+         stage('Production') {
+            steps {
+                echo "This is Prod"
+            }
+        }
+    }
+    post{
+        always{
+            echo "It will alway say Hello Again!!!!!"
+        }
+        failure{
+            echo "Failure"
+        }
+        success{
+            echo "Success"
+        }
+    }
+}
+
+==============================================================
+
+>>>>  parallel pipeline (run job parallely)
+
+pipeline {
+	agent any
+		stages {
+			stage('test') {
+			parallel {
+				stage('test') {
+					steps {
+						echo 'teststep'
+					}
+				}
+				stage('tes par') {
+					steps {
+						echo 'test par'
+					}
+				}
+
+			}
+		}
+	}
+}
+
+==============================================================
+
+>>>> Pipeline as code - Short Trick
+
+> peline Script From SCM 
+	- Git > Repository URL
+	- Script Path > file name
+	
+> From Visual Studio > create new file and save with No extention
+	- type pipeline > it will give sample code
+	
+> Pipeline Syntax 
+	- Configuration > Pipeline Syntax
+	- it wil help us to create syntax of commands
+	- Snippet Generator
+	- Directive Generator
+	
+==============================================================
+
+>>>> Pipeline as Code - Easiest Way To Write Jenkinsfile
+
+> We need plugin for this : "Blue Ocean"
+
+==============================================================
+
+>>>> Jenkins Maven Project Pipeline As Code - Send Slack Notification
+
+1) We need maven tool
+	- maven plugin
+	- Manage Jenkins > Tools > Maven installations > Name (Maven) 
+    tools {
+        maven 'Maven' 
+    }
+	
+2) slack plugin for notification
+
+
+pipeline{
+    agent any
+
+    stages{
+        stage("Test"){
+            steps{
+                //mvn test
+                sh mvn test
+                slackSend channel: 'jenkinsdemo', message: 'job started'
+            }
+        }
+        stage("Build"){
+            steps{
+                mvn package
+            }
+        }
+        stage("Deploy on test"){
+            steps{
+                // deploy on container -> plugin
+                deploy adapters:[tomcat9(credentialsId: 'tomcatserverdetails1', path:'', url: 'http://192.168.0.118:8080')], contextPath: '/app', war: '**/*.war'
+            }
+        }   
+        stage("deploy on prod"){
+            input{
+                message "Should we continue?"
+                ok "Yes we should"
+            }
+            steps{
+                // deploy on container -> plugin
+                deploy adapters:[tomcat9(credentialsId: 'tomcatserverdetails1', path:'', url: 'http://192.168.0.119:8080')], contextPath: '/app', war: '**/*.war'
+            }
+        }
+    }
+    post{
+        always{
+            echo "========always========"
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+            slackSend channel: 'jenkinsdemo', message: 'job success'
+        }
+        failure{
+            echo "========pipeline execution failed========"
+            slackSend channel: 'jenkinsdemo', message: 'job fail'
+        }
+    }
+}
+
+==============================================================
+
+pipeline {
+  agent any
+  environment {
+    BRANCH = "${GIT_BRANCH}"
+    COMMIT = "${GIT_COMMIT}"
+    BITBUCKET_CREDS = credentials('jenkins-bitbucket-credentials')
+  }
+  stages {
+    stage('Build and Push Docker Image') {
+      steps {
+        sh 'docker image prune -af'
+        sh 'docker build -t 999999999999.dkr.ecr.ap-south-1.amazonaws.com/dev-environment-frontend:${GIT_BRANCH}-${GIT_COMMIT} .'
+        sh 'docker push 999999999999.dkr.ecr.ap-south-1.amazonaws.com/dev-environment-frontend:${GIT_BRANCH}-${GIT_COMMIT}'
+      }
+    }
+    stage('Update Manifest in GitOps'){
+      steps {
+        git credentialsId: 'jenkins-bitbucket-credentials', url: 'https://bitbucket.org/abcdefg/abcdefg-gitops.git', branch: 'dev'
+      
+        sh 'git config user.email "abc.abc@xyz.com"'
+        sh 'git config user.name "abcxyz"'
+          
+        sh "sed -i 's#image: .*#image: 999999999999.dkr.ecr.ap-south-1.amazonaws.com/dev-environment-frontend:${env.BRANCH}-${env.COMMIT}#' deployment.apps/dev-environment-frontend.yaml"
+
+        sh 'git add .'
+        sh 'git commit -m "updating newer image"'    
+        sh "git push https://${BITBUCKET_CREDS_USR}:${BITBUCKET_CREDS_PSW}@bitbucket.org/abcdefg/abcdefg-gitops.git dev"
+      }
+    }
+  }
+}

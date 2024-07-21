@@ -1,0 +1,56 @@
+** Fundamental **
+
+>> Virtualization
+- Optimum utilization of hardware resources
+- split H/W
+
+>> Hyperviser
+- Hypervizer is a software it will take strong h/w and for sharing purposes it is going to split the h/w into something which is called VM
+
+>> Contenerization
+- Spliting OS
+- Light weight virtualization
+- share only application
+
+> CRE - Container Runtime Engine
+ - To help to create container
+
+> How container works (features of linux kernal)
+1) namespace (what you are allow to see)
+2) c-group (quota) (How much you are allow to use)
+3) union file system
+
+> lxc (linux container)
+
+>> Container Advantages : 
+- Light weight
+- security (SE linux) security enhance linux
+- 3 VM = 9 Container
+- more application packing dencity
+- cost effective
+- fast
+- less mentainance
+- less paching
+
+**in container either linux or windows
+
+**container poisoning
+
+**container size in MB's
+
+ECS - Elastic container service (Docker)
+- Highly secure, reliable, and scalable way to run containers
+
+***** Single point of failure (SPOF) *****
+
+- Multiple system
+- container orchestration engine tool - kuberneties and In AWS called EKS (Elastic Kuberneties service)
+- to manage container
+
+** Docker Swarm
+
+- CI/CD
+
+** Hardware Appliance - h/w preconfig os and app
+
+** Virtual appliance - share VM - in cloud 90% Virual appliance

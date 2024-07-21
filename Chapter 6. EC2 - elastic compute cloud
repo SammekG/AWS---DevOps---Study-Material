@@ -1,0 +1,987 @@
+********* EC2 - elastic compute cloud - Regional Service ***********
+
+**EC2 is a web service which allow us to create virtual and bare metal servers
+
+>> Bare metal because i do not want to use xen or KVM hypervizer i want to use my own hypervizer
+
+instance/ server/ VM/ compute  -- they all can be intrerchangibly used
+
+just like a server, or a Virtual machine or like my own computer
+
+What is a virtual machine?
+
+EC2 - benifits :
+
+1) Easy - because web server
+2) V.V.Fast
+3) Flexible / Elastic / Scalable
+4) Resizable
+5) Web Service
+6) Secure
+7) Reliable - SLA
+8) Pay as you go
+
+>>>> Architecture of EC2 <<<<
+
+- Server Layer / H/W Layer
+- Hyperviser Layer
+- EC2 Layer
+
+https://aws.com > ec2 service > Region > AZ > Schedular > take decision where to create instance (hypervizor) > Create Instance
+
+**EC2 is a web service to create virtual machine
+
+**EC2 is Resional and it's zonal (AZ based) service
+
+**All instance disk came from SAN storage and it's called as EBS
+
+**SAN storage data easily move from 1 instance to another
+
+**Instance store is a Temporory storage
+
+>>>> Tenancy Model <<<<
+
+1) Shared Tenancy
+- Most popular
+- Cost effective
+- Like PG / shared auto ricksha
+
+2) Dedicated Instance
+- Like Single room
+
+3) Dedicated Host
+- ESXI - Paper Licence - Dongal
+- Like Own Flat
+
+Based on Tenancy instances are classified into two types
+------------------------
+1. Shared tenancy model - it is the default option
+2. Dedicated tenancy model -- it is extremly costly, 
+not very good option in prod servers
+
+
+>>>> Purchase Option - Types of Ec2 instance <<<<
+
+1) On Demand Instance.
+- Most Expensive
+- per sec - per min pricing
+- Testing
+
+2) Reserved Instance
+- 1 Year to 3 Years
+- Production
+
+3) Schedule Instance
+
+4) Spot Instance
+- Bidding
+
+Types of Ec2 instance based on the reservation model
+-----------------------
+
+1. on-demand instance -- will be the costliest, 
+almost 60% costlier than the RI
+2. reserved instance (RI) -- you will reserve instance for a 
+specified period of time -- 1 year or 3 years
+
+				there are three payement models of RI
+				
+					1. all upfront -- the cheapest option  -- 1000
+					2. partial upfront -- half downpayemnt + other half in eqauted monthly insta (EMI) 
+															-- 500 + 600/12 = 1050
+					3. no upfront -- costliest -- 1100
+
+3. spot instance -- AWS will let the unused compute to offer at a very discounted rate
+					You have the option to request Spot Instances and specify the 
+					maximum price you are 
+					willing to pay per instance hour. 
+					If you bid higher than the current Spot Price, 
+					your Spot Instance is launched and will be charged at the current Spot Price. 
+					Spot Prices often are significantly lower than On-Demand prices, s
+					o using Spot Instances for flexible, 
+					interruption-tolerant 
+					applications can lower your instance costs by up to 90%.
+
+
+
+>>>> SIZE - Instance Type <<<<
+
+t - tiny 1 CPU 512 RAM
+M - mediam
+G - general purpose
+C - CPU (compute) optimize
+R - Memory Optimize
+D - Disk optimize
+X - x larger 4096 CPU - 4 TB RAM
+
+****Once you rebbot EC2 instance then it only Operating System Services Refresh
+
+-------------------
+Types of Ec2 instance based on the compute nature
+-----------------------
+1. general purpose  -- 
+2. compute optimized -- will have high end CPU/processor configuration compared to 
+rest other parameter
+3. memory optimized -- will have high memory ratio. 
+- want to perform cache operation
+4. storage optimized -- will have high storage capabilities compared to other parameters
+5. GPU enabled -- speciaqlized with Graphics card, 
+gamesing, video encoding, deep learning, NEURAL DESIGN
+
+ONPREM DS - 
+
+IAAS - Infrastructure as a Service -- EC2 - 
+PAAS - Platform as a Service - AWS Bean Stack
+SASS - Software as a Service
+
+in RI two types of offerings
+------------------
+1. standard
+2. convertible
+
+3 years t2.micro 3000 INR all upfront
+		1 year 1000 deduct == 2000 
+
+t2.xlarge -- 1500 per year
+
+In Free Trail account - t2-micro
+-------------
+750 hours of t2.micro in a month
+
+1 * 24 * 31 days = 744 ~~ 750
+
+2 * 24 * 15 days = 720
+
+3 * 3 * 30 days = 270
+
+4 * 24 * 8 days
+
+
+Amazon Machine Image (AMI)
+---------
+RDP - rempte desktop protocol -- a windows server from a windows computer -- port 3389
+SSH -- secured shell connection- a linux server from my Windows computer  -- port 22 
+HTTP -  80
+HTTPS - 443
+---Putty---
+port
+airport
+passport
+
+SSH Key pair
+----------
+-- Pubic Key (AWS will store it and will also be injected in the instance) 
+++ Private key ( you have to store it). They are mathematically related. KARAN - ARJUN
+
+At every login on instance, you will provide Private key, which AWS will match with the Public key. If they both recognises each other, 
+then you will be allowed to login. 
+
+A key pair consists of a public key that AWS stores, 
+and a private key file that you store. 
+Together, they allow you to connect to your instance securely.
+
+You have to download the private key file (*.pem file) before you can continue. 
+Store it in a secure and accessible location. 
+You will not be able to download the file again after it's created.
+
+PEM- privacy enhanced mail 
+
+What is an IP? need?
+-----------------
+XXX.XXX.XXX.XXX
+0-255.0-255.0-255.0-255
+
+a unique numbers, associated with a computer to communicate in a network ( LAN, WAN ,WWW)
+
+XXX from 0 to 255
+
+
+d   / l / - 
+rwx - owner  r = 4 w = 2 x 1 = 4+2+1=7
+r-x -  group
+r-x - others
+-
+rw-
+r--
+r-- abc.txt
+
+chmod 775 abc.txt
+
+Public IP -- which can be used on Internet  -- it is unique across globle -- mobile num
+Private IP -- can only be used within a network  -- office desk extn number -- 
+can be duplicate i.e. in one network a Pvt IP can be there, 
+same pvt IP can be there in another private network -- TCS
+
+Putty-- will help you to connect a Linux Instance from a Windows computer
+
+In order to work with Putty, you would not be able to use the .PEM file.
+
+.PEM file as input ---->   Puttygen   ------------>  .PPK file
+
+PPK- putty private key
+
+Linux you need a web host platform called Apache HTTP.
+
+Windows you need a web host platform called IIS.
+
+:
+;
+~  -- tilde
+&  -- ampersand
+
+drwxr-xr-x
+
+d  -- will determine if it is a directory or a file. if it is "d", then it is directory, 
+if it is "-" then it is a file
+rwx -- what will be the permission on this file which "OWNER" of this file will enjoy
+r-x -- what will be the permission on this file which "GROUP of OWNER" of this file will enjoy
+r-x -- what will be the permission on this file which "OTHERS/WORLD" of this file will enjoy
+
+777
+4+2+1 = 7 
+
+chmod 
+
+File
+10000 lines 
+GREP
+
+Relative paths -- 
+Absolute path
+
+to convert a ec2 instance into a webserver
+-------------
+sudo su -
+yum update -y
+yum install httpd -y
+
+cd /var/www/html 
+				vi index.html
+				you need to type "i" for insert mode
+						"write your content and save it"
+				Esc Shift + : x (for save file)
+d	d - directory - file
+rwx --owner
+r-x --group
+r-x	--public / others			
+-
+rw-    4-read 2- write 1-execute
+r--
+r--
+chmod 766 
+rwx
+r-x
+r-x
+						
+service httpd start
+service httpd status
+
+
+>>>> Key Troubleshoting <<<<
+
+***Asymetric Key
+- Pub and pri key - for authentication
+- long and CPU utilization this is the problem
+***Symetric Key
+- session key
+- short key > common key - priv - public
+- not permonent (it's available till session active)
+
+How communication happening in SSH?
+1) Sync
+2) ssh:22 > random number - encrypt
+3) decrypt (random num) - private key 
+4) decript to system
+5) handshake (session key)
+6) data transfet
+
+
+**** AMI - Amazon Machine Image > Pre configured pre installed
+
+------------------ Troubleshooting with Keys Linux Instance ---------------
+
+>>>>>> how to add new user and use same aws keys <<<<<<
+
+> Find your instance key location
+cat /home/ec2-user/.ssh/authorized_keys
+
+> To make root user
+sudo su -
+
+> cloud-init store log where location 
+cd /var/logs
+> cloud-init-output.log
+cat cloud-init-output.log
+
+> To check file permission
+ll /home/ec2-user/.ssh/authorized_keys
+
+> To add user 
+useradd raja
+
+> To check is user added or not
+cat /etc/passwd
+
+> To set password o user
+passwd <username>
+passwd raja
+
+*** In ssh password based login not allowd we need keys
+
+To create directory 
+> mkdir .ssh
+
+To change permission
+> chmod 700 /home/raja/.ssh/
+
+To copy File 
+> cp /home/ec2-user/.ssh/authorized_keys /home/raja/.ssh/
+
+To change ownership
+> chown -R raja:raja /home/raja/.ssh
+
+
+>>>>>> Linux based keys - ssh-keygen <<<<<<
+
+Sudo Entry
+cat /etc/sudoers
+
+To add user 
+> useradd navin
+
+To set password 
+> passwd navin
+
+> To check is user added or not
+cat /etc/passwd
+
+To check password set or not 
+> cat /etc/shadow
+
+To generate Key
+> ssh-keygen -t rsa (algorithem uses for ssh encryption and decryption)
+Generating public/private rsa key pair.
+
+To copy public key to navin .ssh filder with authorized_keys
+> cp id_rsa.pub /home/navin/.ssh/authorized_keys
+** public key should be in authorized key file
+
+To download private key
+> cat id_rsa
+and copy the key and save it into our system
+
+
+>>>>>> If we lost privte key <<<<<<
+> connect instance directly and generate key "ssh-keygen -t rsa"
+and copy public key to authorized_keys and download private key
+
+
+>>>>>> Security Group <<<<<<
+if instance SG is inbound traffic not set or ssh traffic not set then we not able to connect
+we need to check and set the SG inbound rules
+
+
+>>>>>> Puttygen Key <<<<<<
+We need to generate key from Putty Gen pub and pri
+and copy key to instance
+
+
+>>>>>> SSM Agent (if we lost key / disabled port / sshd / rdp not working) <<<<<<
+
+-AWS Systems Manager Agent
+
+To see connection traffic from where
+> netstat -antlpu
+
+To check sshd status
+> systemctl status sshd
+
+To stop sshd 
+> systemctl stop sshd
+
+To disable sshd
+> systemctl disable sshd
+
+** Key gon
+** SG gon
+** sshd gon
+
+>> Then we have solution is SSM Agent
+
+Instance > Connect > Session Manager
+
+>> Need to create SSM ROLE
+
+IAM > Role > create Role > select EC2 > EC2 Role for AWS Systems Manager > create role
+
+Then
+
+EC2 > select instance > Action > Security > Modify Role > Select ssm role
+
+Then
+
+Start stop instance
+
+Then
+
+EC2 > select instance > Connect > Session Manager > Connect > Done
+
+
+------------------ Troubleshooting with Keys - Windows Instance -----------
+
+>>>>>> If we lost System password and key then follow <<<<<<
+> Session Manager (SSM Agent)
+> First Create Role "EC2 Role for AWS Systems Manager"
+> Then Attched to Instance : Action > Security > Modify IAM ROLE
+> Start Stop Instance
+> Connect directly
+
+Command to reset pasword
+> net user Administrator *
+
+Now connect through RDp 
+And it's done
+
+>>>>>> RDP Disabled <<<<<<
+
+Computer > Properties > Remote Settings > Select "Don't allow remote connection to this computer"
+
+RDP Stop then start though this below
+
+> netsh advfirewall firewall set rule group="remote desktop" new enable=Yes
+
+> reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+
+Now you can able to connect through RDP
+
+
+>>>>>> EBS <<<<<<
+
+if server panic / kill
+
+===========================================================================
+
+--------------------- Elastic IP ---------------------
+
+An Elastic IP address is static; it does not change over time.
+
+An Elastic IP address is for use in a specific Region only, and cannot be moved to a different Region.
+
+##### Rules of Elastic IP
+
+1. elastic IP is very very costly
+2. if you have allocated an EIP, and you have not attached it to any instance, 
+then we are going to charge you heavily
+3. if you have allocated an EIP, 
+and you have attached it to a instance, and the instance in in STOPPED 
+state then we are going to charge you heavily
+4. if you have allocated an EIP, and you have attached it to an instance, 
+and the instance is in RUNNING state, then we are not going to charge you
+
+
+****** To Create Web Server ******
+
+40% trafic run on apache ------------ ngenix 30%  ---------------  cloudflair 10%  ----------------  iis 4%
+
+sudo su -
+
+yum install -y httpd
+
+cd /var/www/html/
+vi index.html
+
+or 
+
+cat >/var/www/html/index.html
+ctr + d
+
+cat /var/www/html/index.html
+
+or
+
+eco "This is a web server coming from ec2" >/var/www/html/index.html
+cat /var/www/html/index.html
+
+
+systemctl status httpd
+
+curl localhost
+
+systemctl enable --now httpd
+
+===========================================================================
+
+--------------------------USER DATA SCRIPT (UDS) -------------------------
+
+**************user data script for installing application on ec2 startup **
+
+>>> For Linux 
+
+#!/bin/bash
+yum install -y httpd
+echo "This is a web server coming from ec2" >/var/www/html/index.html
+systemctl enable --now httpd
+
+cd /var/log
+
+To find log what you install 
+cat cloud-init-output.log
+
+curl http://localhost
+
+
+********bootstrap ec2 iis server with user data script*******
+
+>>> For Windows
+
+<powershell>
+Install-WindowsFeature -name Web-Server -IncludeManagementTools
+New-Item -Path C:\inetpub\wwwroot\index.html -ItemType File -Value "Sammek Anjankumar Gandhi" -Force
+</powershell>
+
+
+>> To find which user data script running in my instance
+
+- Instance > Action > Instance Setting > Edit user data
+
+
+**********************ec2 metadata url********************
+
+****Can you find the information of the instance ?
+thers is a URL and which work on ** 169.254.169.254 ** this ip
+
+To find meta data and user data from command line
+
+> Metadata
+
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/
+
+
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4
+
+> user data
+
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` && curl -H 
+"X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/user-data/
+
+
+**************how to re-run the user data script in ec2****************
+
+**** MIME script to edit user data after instance get created
+
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#!/bin/bash
+useradd gandhi
+echo "Editing user data after instance create and adding new user gandhi" >>/var/www/html/index.html
+
+
+--//--
+
+To check user added or not
+cat /etc/passwd
+
+To delet user
+userdel -r gandhi
+
+--------------------------------------------------------------------------
+
+****Instance terminate protection
+
+Instance > Action > Instance Setting > Change Termination Protection
+
+
+****Change Shutdown Behaviour
+
+Instance > Action > Instance Setting > Change shutdown behavior > Select "Shutdown behavior"
+
+===================Bootstrap script===================
+
+You can specify user data to configure an instance or run a configuration 
+script during launch.
+
+#!/bin/bash
+sudo su -
+yum update -y
+yum install httpd -y
+systemctl start httpd.service
+systemctl enable httpd.service
+hostname >> /var/www/html/index.html
+echo "Hello Radhe Krishna..." >> /var/www/html/index.html
+
+echo "hi" >> a.html
+echo "hello" >> a.html
+
+a.html
+hihello
+
+#include<math.h>
+
+#!  -- shebang
+
+/bin/bash
+
+ksh
+csh
+bash 
+
+shell
+
+colonel
+
+hostname >> /var/www/html/index.html
+
+cd /var/www/html
+
+		vi index.html
+
+>     --->  single redirection operator ( overwrite )
+>>    ---> double redirection operator ( it will APPEND- to write at the last)
+
+Q- i have created a UDS. That had some issues and now i want to modify 
+and then execute it. How can I do?
+Ans- UDS can run only once at the time of instance provisioning.
+
+===========================================================================
+
+What is mean by status check ?
+2/2 check
+h/w - hyperwiser - ec2 - instance
+1) first check is get failed if aws h/w is not working or down (99% start ad stop to resolve the issue)
+
+2) instance rechablity test (wrong with n/w or hyperwiser or etc. then it get failed) (99% start ad stop to resolve the issue)
+
+Two main things for 2/2 check
+hardware/system rechablity
+instance rechablity
+
+===========================================================================
+
+----------------EBS - Elstic Block Storage--------------------------
+
+>> Volume service
+
+>> You cannot reduce EBS Volume, it's only expand
+
+>> Attached and detached in same AZ
+
+EBS > attached > lsblk > fdisk > filesystem > mount point > mount
+
+SAN > RAID > LVM > EBS
+
+>> SSD Disk (Chips)
+Mainly Used in DB
+Expensive
+Random IO
+AWS Provides
+- gp2 (16 TB/3000iops) - default
+- gp3 (16TB/16000 iops)
+- pio1 (16TB) - iops
+- pio2 (64 TB - 256000 iops)
+
+gp - general purpose
+pio - provisional io
+
+****Trusted Adviser
+
+>> Magnetic Disk (Motor Spindal)
+Cheap
+sequential / Streaming
+media video
+AWS Provides
+- Normal Disk 
+- SC (sequentialy cold optimize disk) - logs
+- ST (sequentialy throuput optimize disk) - Movies
+
+****Fiber chanel (EBS)
+
+SC and ST no boot disk
+gp2 gp3 pio01 pio2 and normal disk contains OS
+
+SAN is a dedicated computer is main to export H/D
+SAN storage alwase implementd with FC (scsi)
+
+DAS - instance store
+SAN - EBS
+
+Default sorage is EBS
+
+>>EBS is not a disk is a volume service
+
+SAN Sorage (H/W)
+> RAID > LVM > EBS (attached/detached)
+
+EBS is a zonal service (AZ)
+
+
+-------------------------------------
+
+Linux  				Winwods
+
+> EBS 				> EBS
+/dev/sda(sata)		disk1
+/dev/xvda(XEN)		disk2
+/dev/vda(KVM)
+
+lsblk				manage - disk
+fdisk
+
+					reinitialize (online/offline)
+					
+Partition			partition
+
+create file system	formatint (FAT/NTFS)
+ext4/xfs			
+
+mounting			drive letters
+
+
+<< Commands >>
+
+sudo su -
+lsblk
+df -h
+df -hT > to know file system
+lsblk -f > to know file system
+
+Ad new storag from EBS
+lsblk
+
+To make file system >
+mkfs.ext4 /dev/xvdf
+
+lsblk -f
+
+To mount New disk >
+mkdir /data1
+
+df -h
+
+mount /dev/xvdf /data1/
+
+df -h
+
+To unmount : 
+
+cd /
+umount /data1
+
+df -h
+
+---------------------------------------------------
+
+Disk Expantion
+
+>> can we do increase root file system?
+Yes 
+
+>> The size of a volume can only be increased, not decreased.
+
+>> Increasing the existing file system (Root)
+
+>> Once we modify volume we need to wait for 6-hr for next modify
+(You've reached the maximum modification rate per volume limit. Wait at least 6 hours between modifications per EBS volume.)
+
+****how to increase / (root) file system?
+
+lsblk
+
+df -hT
+
+increase the volume from EBS
+
+lsblk
+
+growpart /dev/xvda 1  (it will grow partition not file system)
+
+lsblk
+
+df -hT
+
+xfs_growfs /dev/xvda1    (To increase the file system - xfs is a Type of file system)
+
+*** resize2fs /dev/xvdf  (if file type is diffrent then run this command)
+
+
+df -hT
+
+
+permenently provision disk file system
+
+>>>> vi /etc/fstab
+add in next line 
+-> /dev/xvdf		/u01		ext4	defaults		0 0
+and save
+
+mount -a
+
+
+2TB > GPT
+2TB < MBR
+
+---------------------------------------------------
+
+Volume/ EBS ( elastic block storage)
+
+1. Root Volume -- mandatory ( just like the C:// drive becuase it contains all OS related files/folders)  
+-- name must always be "/dev/xvda"
+2. Additional volume -- optional
+
+Types of EBS volume
+--------------------
+
+1. SSD ( solid state drive) -- they are costly than HDD
+		1. general purpose  (gp2 / gp3)
+		2. Provisoned IOPS (io1/io2/io3)
+2. HDD ( hard disk drives)
+		1. sequential throughput optimized (st1) -- 
+		big data, data warehousing, log processing
+		2. sequential cold (sc1) / cold HDD 
+		( archival purposes, infrequntly accessed data)
+Magnetic -- previous gen volume		
+
+Throughput -- measures the number of bits read/write per second 
+-- measure the amount of data transferred in a sec
+IOPS -- measures the number of read/write operations per second 
+-- number of operations performed in a sec
+
+100 Bricks --
+2 person
+1 round - 10 Bricks - Throughput
+10 round - 100 Bricks
+
+Q- can I choose all types of EBS volumes as my ROOT volume?
+Ans- HDD types are not avaialble. SSD and Magnetic are avaialble.
+
+Q- can I choose all types of EBS volumes as my Additional volume?
+Ans- Yes, all HDD, SSD & magentic
+
+Free tier eligible customers can get up to **30 GB** of EBS 
+**General Purpose (SSD)** or **Magnetic storage**.
+
+** Size and Type both can be modified.
+** The size of a volume can only be increased, not decreased.
+
+Q- can this volume be detached from this machine? to attach it to another instance?
+Ans- yes
+
+Q- can an EBS volume be attached to multiple ec2 instances at the same time?
+Ans- NO
+15.206.92.13
+43.205.115.78
+
+Q- can i detach the ROOT volume?
+Ans- No. You cant detach ROOT volume from a RUNNING instance. 
+Additional volumes can be attached/detached when the instance is RUNNING. 
+If the ROOT volume is not attached to an instance, then it cant be STARTED.
+
+Q- will the billing of STOPPED instance be ZERO?
+Ans- It will not be ZERO, but it will be almost nulls, very less amount of bill.
+
+
+@@  When you STOP instance, the PUBLIC IP will get lost.
+
+@@  When you REBOOT instance, the PUBLIC IP will not be changed.
+
+IPv4 is a SCARCE resource. It has huge demand but not matching SUPPLY.
+Can we increase the Supply of IPv4
+0-255.0-255.0-255.0-255
+
+Total number of avaialble IPv4 = 2^32 == 4.2 billion
+
+XXX.XXX.XXX.XXX
+
+XXX- 0 to 255. Total number = 256 = 2^8
+
+0.0.0. 0- 255
+0.0.1.0-255
+
+@@ Public IP of ec2 instance is dynamic ( will be changed at every STOP --> START)
+
+@@ can I create a Static Public IP -- ELASTIC IP
+
+15.207.108.107
+43.205.77.135
+
+Private IP address
+ 172.31.46.190
+User name
+ Administrator
+Password
+ gCfbN5Bui9b8!3B*AEWnP9USILcqeJqc
+---------------
+
+Windows instance --
+
+EBS Termination -- Delete on Termination Button the EBS page while creating instance
+-------------
+
+EBS volumes persist independently from the running life of an EC2 instance. However, you can choose to automatically delete an EBS volume when the associated instance is terminated.
+
+If it is ON, then that volume will be terminated when the instance will be terminated.
+
+If it is OFF, then that volume will be remain in your account when the instance will be terminated.
+
+EBS volumes which do not have "Delete on Termination" set to true will persist after this instance is terminated.
+
+Public DNS	ec2-65-2-31-179.ap-south-1.compute.amazonaws.com
+User name	Administrator
+Password	
+uN4vC4WjzoK$Lc3U3Ek!6%YfGK;2KPOd
+Close
+
+--------------------------------------------------------------------------
+
+********************Snapshot*********************
+
+the point-in-time backup of EBS volume
+it will be stored in S3, not in your S3 bucket, it will be in AWS's system S3 bucket
+incremental backup
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSSnapshots.html
+
+Q- can i move my EBS volume from one AZ to another AZ?
+Ans- yes can be done but not at the hardware level. Data level movement is possible. 
+Create a SNAPSHOT, restore that SNAPSHOT into volume and there select the AZ
+
+lsblk ===list block devices
+df -h === file system
+
+In Linux instances, when you will create and attach a VOLUME, two tasks to be performed--
+1. create a mountpoint
+2. create a file system
+
+mkfs.xfs /dev/xvdf -- created fs
+
+mkdir /myadditionalvalume
+
+mount /dev/xvdf /myadditionalvalume
+
+xfs_growfs /dev/xvdf
+
+umount -l /additionalvolume
+
+------------------------
+
+****Create instance from existing instance
+
+Select Instance > Action > image and templets > Launch more like this

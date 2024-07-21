@@ -1,0 +1,59 @@
+AWS CEO : Adam (2021)
+
+>> What is a cloud :
+AWS cloud is a Collection of data center connected with each other which is accessable over the internet
+
+cloud computing is a delivery model of Compute resources like CPU, RAM, Storage, Database, OS, Applications
+the services are avaialble over Internet
+these resources will remain located in Cloud Vendor's (AWS, Azure, GCP, Alibaba etc.) Data Center
+at a REMOTE location
+you will pay per usages (pay-as-you-go model)
+
+Region - Logical 
+Mumbai - AP-South-1
+
+-Availibity Zone - min 3 highly avaialble - Actual DS
+AP-South-1a
+AP-South-1b
+AP-South-1c
+AWS backbone N/W - AWS Private Line
+80 to 100 km diff
+
+1. Online Resources
+2. Clod Based App. : Netflix
+3. Storage Accesable over the internet
+
+Traditional IT Model
+
+1. Servers
+2. PC/Workstation/Laptop
+3. Space (Developers, Admin, Managers, N/W, etc.)
+4. Manpower 
+5. Software : Runtime, Liberarie, OS
+6. Network Resources (Router, Switches, Cables, etc.)
+7. Cooling System
+8. Power Supply
+9. Storage : SAN, NAS, RAID, Tape Drive
+
+Have you Worked on any infrastructure service?
+> Compute(ec2), network, storage, Security
+
+** Heroku
+
+>> what are the pillers of good applcation.
+1. Operational Excellence
+2. Security
+3. Reliability
+4. Performance Efficiency
+5. Cost Optimization
+6. Sustainability
+
+How many types of service?
+iaas
+paas
+saas
+
+*** AWS Infra ***
+1) Region
+2) AZ
+3) CDN
